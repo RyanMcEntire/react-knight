@@ -1,24 +1,27 @@
 import React, { useEffect, useRef } from 'react';
 import drawPlayer from './drawPlayer';
 
-type ValidKeys = 'ArrowRight' | 'd' | 'ArrowLeft' | 'a';
+type ValidKeys = 'ArrowRight' | 'd' | 'ArrowLeft' | 'a' | ' ';
 
 const keysPressed: Record<ValidKeys, boolean> = {
   ArrowRight: false,
   d: false,
   ArrowLeft: false,
   a: false,
+  ' ': false,
 };
 
 function isKeyValid(key: string): key is ValidKeys {
-  return (
-    key === 'ArrowRight' || key === 'd' || key === 'ArrowLeft' || key === 'a'
-  );
+  return ['ArrowRight', 'd', 'ArrowLeft', 'a', ' '].includes(key);
 }
 
-const canvasHeight = 64 * 12;
+const canvasHeight = 64 * 9;
 const canvasWidth = 64 * 16;
 const playerHeight = 100;
+const latMovementSpeed = 375;
+const baseGravity = 9.8 * 150;
+const megaGravity = baseGravity * 2;
+const jumpVelocity = -850;
 
 const SceneRender: React.FC = () => {
   const playerPosRef = useRef({ x: 100, y: 100 });
@@ -40,6 +43,8 @@ const SceneRender: React.FC = () => {
     }
   };
 
+  const gravityRef = useRef(baseGravity);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isKeyValid(e.key) && keysPressed[e.key] !== undefined) {
@@ -50,6 +55,12 @@ const SceneRender: React.FC = () => {
     const handleKeyUp = (e: KeyboardEvent) => {
       if (isKeyValid(e.key) && keysPressed[e.key] !== undefined) {
         keysPressed[e.key] = false;
+      }
+      if (
+        e.key === ' ' &&
+        playerPosRef.current.y + playerHeight < canvasHeight
+      ) {
+        gravityRef.current = megaGravity;
       }
     };
 
@@ -67,7 +78,8 @@ const SceneRender: React.FC = () => {
   const lastFrameTimeRef = useRef<number | null>(null);
 
   const velocityRef = useRef(0);
-  const gravityAcceleration = 9.8 * 100;
+
+  const previousVelocityRef = useRef(0);
 
   animateRef.current = (timestamp: number) => {
     if (lastFrameTimeRef.current === null) {
@@ -77,8 +89,17 @@ const SceneRender: React.FC = () => {
     const deltaTime = (timestamp - lastFrameTimeRef.current) / 1000;
     lastFrameTimeRef.current = timestamp;
 
-    const latMovementSpeed = 375;
-    velocityRef.current += gravityAcceleration * deltaTime;
+    if (previousVelocityRef.current <= 0 && velocityRef.current > 0) {
+      gravityRef.current = megaGravity;
+    }
+    previousVelocityRef.current = velocityRef.current;
+
+    velocityRef.current += gravityRef.current * deltaTime;
+
+    const charBottom = playerPosRef.current.y + playerHeight;
+    if (charBottom >= canvasHeight && keysPressed[' ']) {
+      velocityRef.current = jumpVelocity;
+    }
 
     if (keysPressed.ArrowRight || keysPressed.d) {
       playerPosRef.current.x += latMovementSpeed * deltaTime;
@@ -93,6 +114,7 @@ const SceneRender: React.FC = () => {
     if (newBottomPosition > canvasHeight) {
       playerPosRef.current.y = canvasHeight - playerHeight;
       velocityRef.current = 0;
+      gravityRef.current = baseGravity;
     } else {
       playerPosRef.current.y += velocityRef.current * deltaTime;
     }
