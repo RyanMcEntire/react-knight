@@ -16,7 +16,8 @@ function isKeyValid(key: string): key is ValidKeys {
   );
 }
 
-const movementSpeed = 375;
+const canvasHeight = 64 * 9;
+const canvasWidth = 64 * 16;
 
 const SceneRender: React.FC = () => {
   const playerPosRef = useRef({ x: 100, y: 200 });
@@ -72,12 +73,24 @@ const SceneRender: React.FC = () => {
     const deltaTime = (timestamp - lastFrameTimeRef.current) / 1000;
     lastFrameTimeRef.current = timestamp;
 
+    const latMovementSpeed = 375;
+    const gravitySpeed = 500;
+    const charBottom = playerPosRef.current.y + 100;
+    const newBottom = charBottom + gravitySpeed * deltaTime;
+
     if (keysPressed.ArrowRight || keysPressed.d) {
-      playerPosRef.current.x += movementSpeed * deltaTime;
+      playerPosRef.current.x += latMovementSpeed * deltaTime;
     }
     if (keysPressed.ArrowLeft || keysPressed.a) {
-      playerPosRef.current.x -= movementSpeed * deltaTime;
+      playerPosRef.current.x -= latMovementSpeed * deltaTime;
     }
+
+    if (newBottom > canvasHeight) {
+      playerPosRef.current.y = gravitySpeed - deltaTime;
+    } else {
+      playerPosRef.current.y += gravitySpeed * deltaTime;
+    }
+
     draw();
     requestAnimationFrame(animateRef.current);
   };
@@ -88,7 +101,7 @@ const SceneRender: React.FC = () => {
 
   return (
     <div>
-      <canvas ref={canvasRef} width={64 * 16} height={64 * 9} />
+      <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
     </div>
   );
 };
