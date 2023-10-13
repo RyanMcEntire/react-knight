@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import drawPlayer from './drawPlayer';
 
 type ValidKeys = 'ArrowRight' | 'd' | 'ArrowLeft' | 'a' | ' ';
@@ -44,10 +44,19 @@ const SceneRender: React.FC = () => {
   };
 
   const gravityRef = useRef(baseGravity);
+  const animateRef = useRef<(timestamp: number) => void>(() => {});
+  const lastFrameTimeRef = useRef<number | null>(null);
+  const velocityRef = useRef(0);
+  const previousVelocityRef = useRef(0);
+  const jumpKeyPressedRef = useRef(false);
+  const isGroundedRef = useRef(true);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isKeyValid(e.key) && keysPressed[e.key] !== undefined) {
+        if (e.key === ' ' && !keysPressed[' '] && isGroundedRef.current) {
+          jumpKeyPressedRef.current = true;
+        }
         keysPressed[e.key] = true;
       }
     };
@@ -61,6 +70,7 @@ const SceneRender: React.FC = () => {
         playerPosRef.current.y + playerHeight < canvasHeight
       ) {
         gravityRef.current = megaGravity;
+        jumpKeyPressedRef.current = false;
       }
     };
 
@@ -72,14 +82,6 @@ const SceneRender: React.FC = () => {
       window.removeEventListener('keyup', handleKeyUp);
     };
   }, []);
-
-  const animateRef = useRef<(timestamp: number) => void>(() => {});
-
-  const lastFrameTimeRef = useRef<number | null>(null);
-
-  const velocityRef = useRef(0);
-
-  const previousVelocityRef = useRef(0);
 
   animateRef.current = (timestamp: number) => {
     if (lastFrameTimeRef.current === null) {
@@ -97,8 +99,16 @@ const SceneRender: React.FC = () => {
     velocityRef.current += gravityRef.current * deltaTime;
 
     const charBottom = playerPosRef.current.y + playerHeight;
-    if (charBottom >= canvasHeight && keysPressed[' ']) {
+
+    if (charBottom >= canvasHeight && jumpKeyPressedRef.current) {
       velocityRef.current = jumpVelocity;
+      jumpKeyPressedRef.current = false;
+    }
+
+    if (charBottom >= canvasHeight) {
+      isGroundedRef.current = true;
+    } else {
+      isGroundedRef.current = false;
     }
 
     if (keysPressed.ArrowRight || keysPressed.d) {
