@@ -49,12 +49,15 @@ const SceneRender: React.FC = () => {
   const velocityRef = useRef(0);
   const previousVelocityRef = useRef(0);
   const jumpKeyPressedRef = useRef(false);
-  const isGroundedRef = useRef(true);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isKeyValid(e.key) && keysPressed[e.key] !== undefined) {
-        if (e.key === ' ' && !keysPressed[' '] && isGroundedRef.current) {
+        if (
+          e.key === ' ' &&
+          !keysPressed[' '] &&
+          Math.abs(velocityRef.current) < 0.1
+        ) {
           jumpKeyPressedRef.current = true;
         }
         keysPressed[e.key] = true;
@@ -100,15 +103,9 @@ const SceneRender: React.FC = () => {
 
     const charBottom = playerPosRef.current.y + playerHeight;
 
-    if (charBottom >= canvasHeight && jumpKeyPressedRef.current) {
+    if (jumpKeyPressedRef.current) {
       velocityRef.current = jumpVelocity;
       jumpKeyPressedRef.current = false;
-    }
-
-    if (charBottom >= canvasHeight) {
-      isGroundedRef.current = true;
-    } else {
-      isGroundedRef.current = false;
     }
 
     if (keysPressed.ArrowRight || keysPressed.d) {
