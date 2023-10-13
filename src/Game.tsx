@@ -1,10 +1,10 @@
-import SceneRender from "./Rendering/SceneRender";
+import AnimatePlayer from './player/AnimatePlayer';
 
 function Game() {
   return (
     <>
       <div>Hello world</div>
-      <SceneRender />
+      <AnimatePlayer />
     </>
   );
 }

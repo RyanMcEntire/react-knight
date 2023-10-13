@@ -1,18 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import drawPlayer from './drawPlayer';
 
-type ValidKeys = 'ArrowRight' | 'd' | 'ArrowLeft' | 'a' | ' ';
+type ValidKeys = 'ArrowRight' | 'KeyD' | 'ArrowLeft' | 'KeyA' | 'Space';
 
 const keysPressed: Record<ValidKeys, boolean> = {
   ArrowRight: false,
-  d: false,
+  KeyD: false,
   ArrowLeft: false,
-  a: false,
-  ' ': false,
+  KeyA: false,
+  Space: false,
 };
 
-function isKeyValid(key: string): key is ValidKeys {
-  return ['ArrowRight', 'd', 'ArrowLeft', 'a', ' '].includes(key);
+function isKeyValid(code: string): code is ValidKeys {
+  return ['ArrowRight', 'KeyD', 'ArrowLeft', 'KeyA', 'Space'].includes(code);
 }
 
 const canvasHeight = 64 * 9;
@@ -23,7 +23,7 @@ const baseGravity = 9.8 * 150;
 const megaGravity = baseGravity * 2;
 const jumpVelocity = -850;
 
-const SceneRender: React.FC = () => {
+const AnimatePlayer: React.FC = () => {
   const playerPosRef = useRef({ x: 100, y: 100 });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -52,24 +52,24 @@ const SceneRender: React.FC = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isKeyValid(e.key) && keysPressed[e.key] !== undefined) {
+      if (isKeyValid(e.code) && keysPressed[e.code] !== undefined) {
         if (
-          e.key === ' ' &&
-          !keysPressed[' '] &&
+          e.code === 'Space' &&
+          !keysPressed.Space &&
           Math.abs(velocityRef.current) < 0.1
         ) {
           jumpKeyPressedRef.current = true;
         }
-        keysPressed[e.key] = true;
+        keysPressed[e.code] = true;
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (isKeyValid(e.key) && keysPressed[e.key] !== undefined) {
-        keysPressed[e.key] = false;
+      if (isKeyValid(e.code) && keysPressed[e.code] !== undefined) {
+        keysPressed[e.code] = false;
       }
       if (
-        e.key === ' ' &&
+        e.code === 'Space ' &&
         playerPosRef.current.y + playerHeight < canvasHeight
       ) {
         gravityRef.current = megaGravity;
@@ -101,17 +101,15 @@ const SceneRender: React.FC = () => {
 
     velocityRef.current += gravityRef.current * deltaTime;
 
-    const charBottom = playerPosRef.current.y + playerHeight;
-
     if (jumpKeyPressedRef.current) {
       velocityRef.current = jumpVelocity;
       jumpKeyPressedRef.current = false;
     }
 
-    if (keysPressed.ArrowRight || keysPressed.d) {
+    if (keysPressed.ArrowRight || keysPressed.KeyD) {
       playerPosRef.current.x += latMovementSpeed * deltaTime;
     }
-    if (keysPressed.ArrowLeft || keysPressed.a) {
+    if (keysPressed.ArrowLeft || keysPressed.KeyA) {
       playerPosRef.current.x -= latMovementSpeed * deltaTime;
     }
 
@@ -141,4 +139,4 @@ const SceneRender: React.FC = () => {
   );
 };
 
-export default SceneRender;
+export default AnimatePlayer;
