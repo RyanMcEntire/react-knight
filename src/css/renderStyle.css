@@ -1,0 +1,16 @@
+.background {
+  transform-origin: left top;
+  transform: scale(2);
+  margin: auto;
+}
+
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+}
+
+.game {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

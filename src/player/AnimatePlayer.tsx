@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import drawPlayer from './drawPlayer';
+import { playerImg, drawPlayerOnCanvas } from './drawPlayer';
 
 type ValidKeys = 'ArrowRight' | 'KeyD' | 'ArrowLeft' | 'KeyA' | 'Space';
 
@@ -17,11 +17,11 @@ function isKeyValid(code: string): code is ValidKeys {
 
 const canvasHeight = 64 * 9;
 const canvasWidth = 64 * 16;
-const playerHeight = 100;
-const latMovementSpeed = 375;
-const baseGravity = 9.8 * 150;
-const megaGravity = baseGravity * 2;
-const jumpVelocity = -850;
+const playerHeight = 312;
+const latMovementSpeed = 325;
+const baseGravity = 9.8 * 100;
+const megaGravity = baseGravity * 3;
+const jumpVelocity = -420;
 
 const AnimatePlayer: React.FC = () => {
   const playerPosRef = useRef({ x: 100, y: 100 });
@@ -36,10 +36,12 @@ const AnimatePlayer: React.FC = () => {
         canvasRef.current.width,
         canvasRef.current.height
       );
-      context.fillStyle = 'yellow';
-      context.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-      drawPlayer(playerPosRef.current.x, playerPosRef.current.y, context);
+      drawPlayerOnCanvas(
+        context,
+        playerPosRef.current.x,
+        playerPosRef.current.y,
+        2
+      );
     }
   };
 
@@ -69,7 +71,7 @@ const AnimatePlayer: React.FC = () => {
         keysPressed[e.code] = false;
       }
       if (
-        e.code === 'Space ' &&
+        e.code === 'Space' &&
         playerPosRef.current.y + playerHeight < canvasHeight
       ) {
         gravityRef.current = megaGravity;
@@ -129,12 +131,24 @@ const AnimatePlayer: React.FC = () => {
   };
 
   useEffect(() => {
-    requestAnimationFrame(animateRef.current);
+    if (!playerImg.complete && playerImg.onload === null) {
+      playerImg.onload = () => {
+        requestAnimationFrame(animateRef.current);
+      };
+    } else {
+      requestAnimationFrame(animateRef.current);
+    }
   }, []);
 
   return (
     <div>
-      <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
+      <canvas
+        className="pixelated"
+        ref={canvasRef}
+        width={canvasWidth}
+        height={canvasHeight}
+        style={{ position: 'absolute', top: 0, left: 0 }}
+      />
     </div>
   );
 };
