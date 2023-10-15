@@ -1,45 +1,49 @@
 import React, { useEffect, useRef } from 'react';
 import { playerImg, drawPlayerOnCanvas } from './drawPlayer';
-import { useKeyManager, ValidKeys } from '../hooks/useKeysPressed';
-import {
-  canvasHeight,
-  canvasWidth,
-  playerHeight,
-  latMovementSpeed,
-  baseGravity,
-  megaGravity,
-  jumpVelocity,
-} from '../constants/gameData';
+import { useKeyManager } from '../hooks/useKeysPressed';
+import { ValidKeys, KeysPressedState } from '../constants/types/types';
+import { usePlayerPhysics } from '../hooks/usePlayerPhysics';
+import { canvasHeight, canvasWidth, playerHeight } from '../constants/gameData';
 
 const AnimatePlayer: React.FC = () => {
   const playerPosRef = useRef({ x: 100, y: 100 });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const gravityRef = useRef(baseGravity);
   const animateRef = useRef<(timestamp: number) => void>(() => {});
   const lastFrameTimeRef = useRef<number | null>(null);
-  const velocityRef = useRef(0);
-  const previousVelocityRef = useRef(0);
-  const jumpKeyPressedRef = useRef(false);
+  const deltaTimeRef = useRef<number>(0);
+
+  const {
+    handleJump,
+    handleRelease,
+    handleLand,
+    applyGravity,
+    setMoveDirection,
+    velocity,
+  } = usePlayerPhysics();
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
     if (key === 'Space') {
-      if (
-        isPressed &&
-        !jumpKeyPressedRef.current &&
-        Math.abs(velocityRef.current) < 0.1
-      ) {
-        jumpKeyPressedRef.current = true;
-      } else if (
-        !isPressed &&
-        playerPosRef.current.y + playerHeight < canvasHeight
-      ) {
-        gravityRef.current = megaGravity;
-        jumpKeyPressedRef.current = false;
+      if (isPressed) {
+        handleJump();
+      } else {
+        handleRelease();
+        handleLand();
       }
     }
   };
 
-  const keysPressed = useKeyManager(handleKeyChange);
+  const handleKeysChanged = (keys: KeysPressedState) => {
+    setMoveDirection(keys);
+  };
+
+  const keysPressed: KeysPressedState = useKeyManager(
+    handleKeyChange,
+    handleKeysChanged
+  );
+
+  useEffect(() => {
+    setMoveDirection(keysPressed);
+  }, [keysPressed, setMoveDirection]);
 
   const draw = () => {
     const context = canvasRef.current?.getContext('2d');
@@ -64,38 +68,22 @@ const AnimatePlayer: React.FC = () => {
       lastFrameTimeRef.current = timestamp;
     }
 
-    const deltaTime = (timestamp - lastFrameTimeRef.current) / 1000;
+    deltaTimeRef.current = (timestamp - lastFrameTimeRef.current) / 1000;
     lastFrameTimeRef.current = timestamp;
 
-    if (previousVelocityRef.current <= 0 && velocityRef.current > 0) {
-      gravityRef.current = megaGravity;
-    }
-    previousVelocityRef.current = velocityRef.current;
-
-    velocityRef.current += gravityRef.current * deltaTime;
-
-    if (jumpKeyPressedRef.current) {
-      velocityRef.current = jumpVelocity;
-      jumpKeyPressedRef.current = false;
-    }
-
-    if (keysPressed.ArrowRight || keysPressed.KeyD) {
-      playerPosRef.current.x += latMovementSpeed * deltaTime;
-    }
-    if (keysPressed.ArrowLeft || keysPressed.KeyA) {
-      playerPosRef.current.x -= latMovementSpeed * deltaTime;
-    }
+    applyGravity(deltaTimeRef.current);
 
     const newBottomPosition =
-      playerPosRef.current.y + playerHeight + velocityRef.current * deltaTime;
+      playerPosRef.current.y + playerHeight + velocity.y * deltaTimeRef.current;
 
     if (newBottomPosition > canvasHeight) {
       playerPosRef.current.y = canvasHeight - playerHeight;
-      velocityRef.current = 0;
-      gravityRef.current = baseGravity;
+      velocity.y = 0;
     } else {
-      playerPosRef.current.y += velocityRef.current * deltaTime;
+      playerPosRef.current.y += velocity.y * deltaTimeRef.current;
     }
+
+    playerPosRef.current.x += velocity.x * deltaTimeRef.current;
 
     draw();
     requestAnimationFrame(animateRef.current);

@@ -1,5 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { ValidKeys, KeyCallback } from '../constants/types/types';
+import {
+  ValidKeys,
+  KeyCallback,
+  KeysPressedState,
+} from '../constants/types/types';
 
 const initialKeysState: Record<ValidKeys, boolean> = {
   ArrowRight: false,
@@ -13,21 +17,26 @@ function isKeyValid(code: string): code is ValidKeys {
   return ['ArrowRight', 'KeyD', 'ArrowLeft', 'KeyA', 'Space'].includes(code);
 }
 
-export const useKeyManager = (onKeyChange?: KeyCallback) => {
-  const keysPressed = useRef(initialKeysState).current;
+export const useKeyManager = (
+  onKeyChange?: KeyCallback,
+  onKeysChanged?: (keys: KeysPressedState) => void
+): KeysPressedState => {
+  const keysPressedRef = useRef<KeysPressedState>(initialKeysState);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isKeyValid(e.code)) {
-        keysPressed[e.code] = true;
+        keysPressedRef.current[e.code] = true;
         onKeyChange?.(e.code, true);
+        onKeysChanged?.(keysPressedRef.current);
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (isKeyValid(e.code)) {
-        keysPressed[e.code] = false;
+        keysPressedRef.current[e.code] = false;
         onKeyChange?.(e.code, false);
+        onKeysChanged?.(keysPressedRef.current);
       }
     };
 
@@ -38,7 +47,6 @@ export const useKeyManager = (onKeyChange?: KeyCallback) => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [keysPressed, onKeyChange]);
-
-  return keysPressed;
+  }, [onKeyChange, onKeysChanged]);
+  return keysPressedRef.current;
 };

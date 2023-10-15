@@ -17,5 +17,4 @@ export const drawPlayerOnCanvas = (
     context.drawImage(playerImg, 0, 0);
   }
   context.restore();
-  console.log(playerSprite);
 };

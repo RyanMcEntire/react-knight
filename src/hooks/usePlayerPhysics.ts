@@ -1,12 +1,70 @@
 import { useRef } from 'react';
+import { PlayerPhysicsOutputs, ValidKeys } from '../constants/types/types';
 import {
-  canvasHeight,
-  playerHeight,
   baseGravity,
   megaGravity,
   jumpVelocity,
+  latMovementSpeed,
 } from '../constants/gameData';
 
-export const usePlayerPhysics = (keysPressed) => {
-  const velocityRef = useRef(0);
+export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
+
+  const setMoveDirection = (keysPressed: Record<ValidKeys, boolean>) => {
+    const isLeftPressed = keysPressed.ArrowLeft || keysPressed.KeyA;
+    const isRightPressed = keysPressed.ArrowRight || keysPressed.KeyD;
+
+    if (isLeftPressed && !isRightPressed) {
+      velocityRef.current.x = -latMovementSpeed;
+    } else if (!isLeftPressed && isRightPressed) {
+      velocityRef.current.x = latMovementSpeed;
+    } else {
+      velocityRef.current.x = 0;
+    }
+    console.log('move direction')
+  };
+
+  const velocityRef = useRef({ x: 0, y: 0 });
+  const previousVelocityRef = useRef({ x: 0, y: 0 });
+  const gravityRef = useRef(baseGravity);
+  const jumpKeyPressedRef = useRef(false);
+
+  const handleJump = () => {
+    if (
+      Math.abs(velocityRef.current.y) < 0.1 &&
+      jumpKeyPressedRef.current === false
+    ) {
+      jumpKeyPressedRef.current = true;
+      velocityRef.current.y = jumpVelocity;
+      gravityRef.current = baseGravity;
+    }
+  };
+  const handleRelease = () => {
+    jumpKeyPressedRef.current = false;
+    gravityRef.current = megaGravity;
+  };
+
+  const handleLand = () => {
+    if (!jumpKeyPressedRef.current && Math.abs(velocityRef.current.y) < 0.1) {
+      gravityRef.current = baseGravity;
+    }
+  };
+
+  const applyGravity = (deltaTime: number) => {
+    if (previousVelocityRef.current.y <= 0 && velocityRef.current.y > 0) {
+      gravityRef.current = megaGravity;
+    }
+    previousVelocityRef.current.y = velocityRef.current.y;
+    velocityRef.current.y += gravityRef.current * deltaTime;
+  };
+
+  return {
+    handleJump,
+    handleRelease,
+    handleLand,
+    applyGravity,
+    setMoveDirection,
+    previousVelocity: previousVelocityRef.current,
+    velocity: velocityRef.current,
+    gravity: gravityRef.current,
+  };
 };
