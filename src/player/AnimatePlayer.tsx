@@ -1,31 +1,45 @@
 import React, { useEffect, useRef } from 'react';
 import { playerImg, drawPlayerOnCanvas } from './drawPlayer';
-
-type ValidKeys = 'ArrowRight' | 'KeyD' | 'ArrowLeft' | 'KeyA' | 'Space';
-
-const keysPressed: Record<ValidKeys, boolean> = {
-  ArrowRight: false,
-  KeyD: false,
-  ArrowLeft: false,
-  KeyA: false,
-  Space: false,
-};
-
-function isKeyValid(code: string): code is ValidKeys {
-  return ['ArrowRight', 'KeyD', 'ArrowLeft', 'KeyA', 'Space'].includes(code);
-}
-
-const canvasHeight = 64 * 9;
-const canvasWidth = 64 * 16;
-const playerHeight = 312;
-const latMovementSpeed = 325;
-const baseGravity = 9.8 * 100;
-const megaGravity = baseGravity * 3;
-const jumpVelocity = -420;
+import { useKeyManager, ValidKeys } from '../hooks/useKeysPressed';
+import {
+  canvasHeight,
+  canvasWidth,
+  playerHeight,
+  latMovementSpeed,
+  baseGravity,
+  megaGravity,
+  jumpVelocity,
+} from '../constants/gameData';
 
 const AnimatePlayer: React.FC = () => {
   const playerPosRef = useRef({ x: 100, y: 100 });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const gravityRef = useRef(baseGravity);
+  const animateRef = useRef<(timestamp: number) => void>(() => {});
+  const lastFrameTimeRef = useRef<number | null>(null);
+  const velocityRef = useRef(0);
+  const previousVelocityRef = useRef(0);
+  const jumpKeyPressedRef = useRef(false);
+
+  const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
+    if (key === 'Space') {
+      if (
+        isPressed &&
+        !jumpKeyPressedRef.current &&
+        Math.abs(velocityRef.current) < 0.1
+      ) {
+        jumpKeyPressedRef.current = true;
+      } else if (
+        !isPressed &&
+        playerPosRef.current.y + playerHeight < canvasHeight
+      ) {
+        gravityRef.current = megaGravity;
+        jumpKeyPressedRef.current = false;
+      }
+    }
+  };
+
+  const keysPressed = useKeyManager(handleKeyChange);
 
   const draw = () => {
     const context = canvasRef.current?.getContext('2d');
@@ -44,49 +58,6 @@ const AnimatePlayer: React.FC = () => {
       );
     }
   };
-
-  const gravityRef = useRef(baseGravity);
-  const animateRef = useRef<(timestamp: number) => void>(() => {});
-  const lastFrameTimeRef = useRef<number | null>(null);
-  const velocityRef = useRef(0);
-  const previousVelocityRef = useRef(0);
-  const jumpKeyPressedRef = useRef(false);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (isKeyValid(e.code) && keysPressed[e.code] !== undefined) {
-        if (
-          e.code === 'Space' &&
-          !keysPressed.Space &&
-          Math.abs(velocityRef.current) < 0.1
-        ) {
-          jumpKeyPressedRef.current = true;
-        }
-        keysPressed[e.code] = true;
-      }
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (isKeyValid(e.code) && keysPressed[e.code] !== undefined) {
-        keysPressed[e.code] = false;
-      }
-      if (
-        e.code === 'Space' &&
-        playerPosRef.current.y + playerHeight < canvasHeight
-      ) {
-        gravityRef.current = megaGravity;
-        jumpKeyPressedRef.current = false;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    };
-  }, []);
 
   animateRef.current = (timestamp: number) => {
     if (lastFrameTimeRef.current === null) {
