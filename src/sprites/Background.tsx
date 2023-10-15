@@ -1,13 +1,6 @@
 import { useEffect, useRef } from 'react';
+import { BackgroundProps } from '../constants/types/types';
 
-
-interface BackgroundProps {
-  imageSrc: string;
-  position: {
-    x: number;
-    y: number;
-  };
-}
 
 const canvasHeight = 32 * 9;
 const canvasWidth = 32 * 16;

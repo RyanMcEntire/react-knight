@@ -1,7 +1,5 @@
 import { useEffect, useRef } from 'react';
-
-export type ValidKeys = 'ArrowRight' | 'KeyD' | 'ArrowLeft' | 'KeyA' | 'Space';
-type KeyCallback = (key: ValidKeys, isPressed: boolean) => void;
+import { ValidKeys, KeyCallback } from '../constants/types/types';
 
 const initialKeysState: Record<ValidKeys, boolean> = {
   ArrowRight: false,
