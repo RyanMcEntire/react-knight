@@ -7,6 +7,7 @@ import {
   canvasHeight,
   canvasWidth,
   scale,
+  playerScale
 } from '../constants/gameData';
 import playerSprite from '../assets/characters/attack1_1.png';
 import { useAnimationLoop } from '../hooks/useAnimationLoop';
@@ -14,7 +15,7 @@ import { useAnimationLoop } from '../hooks/useAnimationLoop';
 const AnimatePlayer: React.FC = () => {
   const [playerImageSrc] = useState<string>(playerSprite);
 
-  const playerPosRef = useRef({ x: 100, y: 100 });
+  const playerPosRef = useRef({ x: 120, y: 100 });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const {
@@ -29,7 +30,7 @@ const AnimatePlayer: React.FC = () => {
   const { draw: drawPlayer, isImageLoaded } = useCanvasDrawing(
     canvasRef,
     playerPosRef.current,
-    scale,
+    scale * playerScale,
     playerImageSrc
   );
 
@@ -68,6 +69,7 @@ const AnimatePlayer: React.FC = () => {
     if (isImageLoaded) {
       requestAnimationFrame(animateRef.current);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isImageLoaded]);
 
   return (

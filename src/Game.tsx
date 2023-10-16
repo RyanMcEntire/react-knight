@@ -1,16 +1,15 @@
 import AnimatePlayer from './player/AnimatePlayer';
 import Background from './sprites/Background';
-import backgroundLevel1 from './assets/backgrounds/uhhh-map1.png';
-import './css/renderStyle.css'
-
-const canvasWidth = 32 * 16;
-const canvasHeight = 32 * 9;
+import backgroundLevel1 from './assets/backgrounds/first-map.png';
+import './css/renderStyle.css';
+import { canvasHeight, canvasWidth } from './constants/gameData';
 
 function Game() {
   return (
     <>
       <div>Hello world</div>
-      <div className='game'
+      <div
+        className="game"
         style={{
           position: 'relative',
           width: canvasWidth,

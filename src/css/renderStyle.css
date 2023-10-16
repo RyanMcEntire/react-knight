@@ -1,7 +1,5 @@
 .background {
   transform-origin: left top;
-  transform: scale(2);
-  margin: auto;
 }
 
 .pixelated {
@@ -11,6 +9,4 @@
 
 .game {
   display: flex;
-  justify-content: center;
-  align-items: center;
 }
