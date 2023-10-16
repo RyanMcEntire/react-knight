@@ -20,7 +20,6 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
     } else {
       velocityRef.current.x = 0;
     }
-    console.log('move direction')
   };
 
   const velocityRef = useRef({ x: 0, y: 0 });

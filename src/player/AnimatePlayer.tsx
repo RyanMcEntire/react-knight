@@ -1,11 +1,19 @@
-import React, { useEffect, useRef } from 'react';
-import { playerImg, drawPlayerOnCanvas } from './drawPlayer';
+import React, { useEffect, useRef, useState } from 'react';
 import { useKeyManager } from '../hooks/useKeysPressed';
 import { ValidKeys, KeysPressedState } from '../constants/types/types';
 import { usePlayerPhysics } from '../hooks/usePlayerPhysics';
-import { canvasHeight, canvasWidth, playerHeight } from '../constants/gameData';
+import { useCanvasDrawing } from '../hooks/useCanvasDrawing';
+import {
+  canvasHeight,
+  canvasWidth,
+  playerHeight,
+  scale,
+} from '../constants/gameData';
+import playerSprite from '../assets/characters/attack1_1.png';
 
 const AnimatePlayer: React.FC = () => {
+  const [playerImageSrc] = useState<string>(playerSprite);
+
   const playerPosRef = useRef({ x: 100, y: 100 });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animateRef = useRef<(timestamp: number) => void>(() => {});
@@ -20,6 +28,13 @@ const AnimatePlayer: React.FC = () => {
     setMoveDirection,
     velocity,
   } = usePlayerPhysics();
+
+  const { draw: drawPlayer, isImageLoaded } = useCanvasDrawing(
+    canvasRef,
+    playerPosRef.current,
+    scale,
+    playerImageSrc
+  );
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
     if (key === 'Space') {
@@ -45,24 +60,6 @@ const AnimatePlayer: React.FC = () => {
     setMoveDirection(keysPressed);
   }, [keysPressed, setMoveDirection]);
 
-  const draw = () => {
-    const context = canvasRef.current?.getContext('2d');
-    if (context && canvasRef.current) {
-      context.clearRect(
-        0,
-        0,
-        canvasRef.current.width,
-        canvasRef.current.height
-      );
-      drawPlayerOnCanvas(
-        context,
-        playerPosRef.current.x,
-        playerPosRef.current.y,
-        2
-      );
-    }
-  };
-
   animateRef.current = (timestamp: number) => {
     if (lastFrameTimeRef.current === null) {
       lastFrameTimeRef.current = timestamp;
@@ -85,19 +82,15 @@ const AnimatePlayer: React.FC = () => {
 
     playerPosRef.current.x += velocity.x * deltaTimeRef.current;
 
-    draw();
+    drawPlayer();
     requestAnimationFrame(animateRef.current);
   };
 
   useEffect(() => {
-    if (!playerImg.complete && playerImg.onload === null) {
-      playerImg.onload = () => {
-        requestAnimationFrame(animateRef.current);
-      };
-    } else {
+    if (isImageLoaded) {
       requestAnimationFrame(animateRef.current);
     }
-  }, []);
+  }, [isImageLoaded]);
 
   return (
     <div>

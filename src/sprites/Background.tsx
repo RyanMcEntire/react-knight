@@ -14,7 +14,6 @@ const Background: React.FC<BackgroundProps> = ({ imageSrc, position }) => {
       const img = new Image();
       img.src = imageSrc;
       img.onload = () => {
-        console.log('image loaded!');
         context.drawImage(img, position.x, position.y);
       };
       img.onerror = (errorEvent) => {
