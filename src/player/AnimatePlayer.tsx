@@ -6,19 +6,16 @@ import { useCanvasDrawing } from '../hooks/useCanvasDrawing';
 import {
   canvasHeight,
   canvasWidth,
-  playerHeight,
   scale,
 } from '../constants/gameData';
 import playerSprite from '../assets/characters/attack1_1.png';
+import { useAnimationLoop } from '../hooks/useAnimationLoop';
 
 const AnimatePlayer: React.FC = () => {
   const [playerImageSrc] = useState<string>(playerSprite);
 
   const playerPosRef = useRef({ x: 100, y: 100 });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const animateRef = useRef<(timestamp: number) => void>(() => {});
-  const lastFrameTimeRef = useRef<number | null>(null);
-  const deltaTimeRef = useRef<number>(0);
 
   const {
     handleJump,
@@ -60,31 +57,12 @@ const AnimatePlayer: React.FC = () => {
     setMoveDirection(keysPressed);
   }, [keysPressed, setMoveDirection]);
 
-  animateRef.current = (timestamp: number) => {
-    if (lastFrameTimeRef.current === null) {
-      lastFrameTimeRef.current = timestamp;
-    }
-
-    deltaTimeRef.current = (timestamp - lastFrameTimeRef.current) / 1000;
-    lastFrameTimeRef.current = timestamp;
-
-    applyGravity(deltaTimeRef.current);
-
-    const newBottomPosition =
-      playerPosRef.current.y + playerHeight + velocity.y * deltaTimeRef.current;
-
-    if (newBottomPosition > canvasHeight) {
-      playerPosRef.current.y = canvasHeight - playerHeight;
-      velocity.y = 0;
-    } else {
-      playerPosRef.current.y += velocity.y * deltaTimeRef.current;
-    }
-
-    playerPosRef.current.x += velocity.x * deltaTimeRef.current;
-
-    drawPlayer();
-    requestAnimationFrame(animateRef.current);
-  };
+  const animateRef = useAnimationLoop(
+    applyGravity,
+    playerPosRef,
+    velocity,
+    drawPlayer
+  )
 
   useEffect(() => {
     if (isImageLoaded) {
