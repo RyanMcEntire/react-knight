@@ -10,3 +10,12 @@
 .game {
   display: flex;
 }
+
+.collision {
+  opacity: 40%;
+}
+
+canvas {
+  padding: 0;
+  margin: 0;
+}

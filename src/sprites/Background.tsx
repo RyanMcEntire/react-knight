@@ -12,7 +12,7 @@ const Background: React.FC<BackgroundProps> = ({ imageSrc, position }) => {
     position,
     scale,
     imageSrc,
-    { translateX: -225, translateY: -200 }
+    { translateX: -224, translateY: -192 }
   );
 
   useEffect(() => {
