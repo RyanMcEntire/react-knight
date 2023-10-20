@@ -16,7 +16,7 @@ type PlayerProps = {
   offscreenCanvas: HTMLCanvasElement | null;
 };
 
-const Player = React.memo(({ offscreenCanvas }: PlayerProps) => {
+const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
   console.log('Player render - offscreenCanvas:', offscreenCanvas);
 
   useEffect(() => {
@@ -53,18 +53,20 @@ const Player = React.memo(({ offscreenCanvas }: PlayerProps) => {
     canvas: HTMLCanvasElement | null
   ) => {
     if (canvas) {
-      console.log('offscreenCanvas exists');
       const context = canvas.getContext('2d');
-      console.log('Before checking context');
       if (context) {
-        console.log('Context exists');
         const pixel = context?.getImageData(x, y, 1, 1).data;
         console.log(
           `Pixel RGBA: ${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]}`
         );
-        if (pixel[0] === 255 && pixel[1] === 0 && pixel[2] === 0) {
-          console.log('collision detected');
-        }
+        console.log(
+          'player position',
+          playerPosRef.current.x,
+          playerPosRef.current.y
+        );
+        // if (pixel[0] === 255 && pixel[1] === 0 && pixel[2] === 0) {
+        //   console.log('collision detected');
+        // }
       }
     }
   };
@@ -125,6 +127,6 @@ const Player = React.memo(({ offscreenCanvas }: PlayerProps) => {
       />
     </>
   );
-});
+};
 
 export default Player;

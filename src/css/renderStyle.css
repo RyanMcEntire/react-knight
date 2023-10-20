@@ -1,15 +1,3 @@
-.background {
-}
-
-.pixelated {
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-}
-
-.game {
-  display: flex;
-}
-
 .collision {
   opacity: 40%;
 }
@@ -17,9 +5,11 @@
 canvas {
   padding: 0;
   margin: 0;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
 }
 
 body {
   padding: 0;
-  margin: 0
+  margin: 0;
 }

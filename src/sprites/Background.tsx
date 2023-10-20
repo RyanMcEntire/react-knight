@@ -11,8 +11,7 @@ const Background: React.FC<BackgroundProps> = ({ imageSrc, position }) => {
     canvasRef,
     position,
     scale,
-    imageSrc,
-    { translateX: -224, translateY: -192 }
+    imageSrc
   );
 
   useEffect(() => {
@@ -24,7 +23,7 @@ const Background: React.FC<BackgroundProps> = ({ imageSrc, position }) => {
   return (
     <>
       <canvas
-        className="background pixelated"
+        className="background"
         ref={canvasRef}
         width={canvasWidth}
         height={canvasHeight}

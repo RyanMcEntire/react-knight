@@ -4,8 +4,7 @@ export const useCanvasDrawing = (
   canvasRef: React.RefObject<HTMLCanvasElement>,
   objectPosition: { x: number; y: number },
   scale: number,
-  imgSrc: string,
-  transform?: { translateX: number; translateY: number }
+  imgSrc: string
 ) => {
   const [isImageLoaded, setImageLoaded] = useState(false);
   const img = useMemo(() => {
@@ -26,11 +25,9 @@ export const useCanvasDrawing = (
           canvasRef.current.height
         );
         context.save();
-        if (transform) {
-          context.translate(transform.translateX, transform.translateY);
-        }
+        
         context.translate(objectPosition.x, objectPosition.y);
-        context.transform(scale, 0, 0, scale, 0, 0);
+        context.scale(scale, scale);
         context.imageSmoothingEnabled = false;
         if (img.complete) {
           context.drawImage(img, 0, 0);

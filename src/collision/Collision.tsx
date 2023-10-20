@@ -1,5 +1,5 @@
 import { parse2D } from '../utilities/make2dArray';
-import { canvasWidth, canvasHeight } from '../constants/gameData';
+import { canvasWidth, canvasHeight, tileSize } from '../constants/gameData';
 import drawCollisionBlock from './drawCollisionBlock';
 import React, { useEffect } from 'react';
 
@@ -10,7 +10,6 @@ type CollisionProps = {
 
 const Collision = React.memo(({ levelData, onCanvasReady }: CollisionProps) => {
   const parsedCollision = parse2D(levelData, canvasWidth);
-  const blockSize = 16;
 
   useEffect(() => {
     const offscreenCanvas = document.createElement('canvas');
@@ -25,7 +24,7 @@ const Collision = React.memo(({ levelData, onCanvasReady }: CollisionProps) => {
         if (cell === 11842) {
           if (offscreenContext) {
             drawCollisionBlock(
-              { x: j * blockSize, y: i * blockSize },
+              { x: j * tileSize, y: i * tileSize },
               offscreenContext
             );
           }
@@ -34,10 +33,15 @@ const Collision = React.memo(({ levelData, onCanvasReady }: CollisionProps) => {
     );
     onCanvasReady(offscreenCanvas);
     if (offscreenCanvas) console.log('canvas ready!');
-    document.body.appendChild(offscreenCanvas);
-    offscreenCanvas.style.position = 'absolute';
-    offscreenCanvas.style.top = '0px';
-    offscreenCanvas.style.left = '0px';
+    const game = document.querySelector('.game');
+    if (game) {
+      game.appendChild(offscreenCanvas);
+      offscreenCanvas.style.position = 'absolute';
+      offscreenCanvas.style.top = '0px';
+      offscreenCanvas.style.left = '0px';
+      console.log('game element found!');
+    }
+    // offscreenCanvas.style.transform = `translateX(-224) translateY(-192)`;
     return () => {
       offscreenCanvas.remove();
     };
