@@ -1,4 +1,4 @@
-import { scale, tileSize } from '../constants/gameData';
+import { tileSize } from '../constants/gameData';
 
 function drawCollisionBlock(
   position: { x: number; y: number },
@@ -6,8 +6,8 @@ function drawCollisionBlock(
 ) {
   const width = tileSize;
   const height = tileSize;
-  const x = position.x * scale;
-  const y = position.y * scale;
+  const x = position.x;
+  const y = position.y;
   const color = 'red';
 
   context.fillStyle = color;

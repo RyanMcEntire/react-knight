@@ -30,7 +30,6 @@ function Game() {
           }}
         />
         <Background imageSrc={backgroundLevel1} position={{ x: 0, y: 0 }} />
-
         {offscreenCanvasRef.current && (
           <Player offscreenCanvas={offscreenCanvasRef.current} />
         )}

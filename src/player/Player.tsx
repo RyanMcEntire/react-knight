@@ -56,17 +56,17 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
       const context = canvas.getContext('2d');
       if (context) {
         const pixel = context?.getImageData(x, y, 1, 1).data;
-        console.log(
-          `Pixel RGBA: ${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]}`
-        );
-        console.log(
-          'player position',
-          playerPosRef.current.x,
-          playerPosRef.current.y
-        );
-        // if (pixel[0] === 255 && pixel[1] === 0 && pixel[2] === 0) {
-        //   console.log('collision detected');
-        // }
+        // console.log(
+        //   `Pixel RGBA: ${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]}`
+        // );
+        // console.log(
+        //   'player position',
+        //   playerPosRef.current.x,
+        //   playerPosRef.current.y
+        // );
+        if (pixel[0] === 255 && pixel[1] === 0 && pixel[2] === 0) {
+          console.log('collision detected');
+        }
       }
     }
   };

@@ -1,5 +1,9 @@
-import { parse2D } from '../utilities/make2dArray';
-import { canvasWidth, canvasHeight, tileSize } from '../constants/gameData';
+import { parse2D } from '../utilities/parse2D';
+import {
+  canvasWidth,
+  canvasHeight,
+  tileSize
+} from '../constants/gameData';
 import drawCollisionBlock from './drawCollisionBlock';
 import React, { useEffect } from 'react';
 
@@ -9,7 +13,7 @@ type CollisionProps = {
 };
 
 const Collision = React.memo(({ levelData, onCanvasReady }: CollisionProps) => {
-  const parsedCollision = parse2D(levelData, canvasWidth);
+  const parsedCollision = parse2D(levelData, 32);
 
   useEffect(() => {
     const offscreenCanvas = document.createElement('canvas');
