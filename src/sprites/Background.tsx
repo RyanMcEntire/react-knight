@@ -22,14 +22,15 @@ const Background: React.FC<BackgroundProps> = ({ imageSrc, position }) => {
   }, [isImageLoaded, draw]);
 
   return (
-    <div>
+    <>
       <canvas
         className="background pixelated"
         ref={canvasRef}
         width={canvasWidth}
         height={canvasHeight}
+        style={{ position: 'absolute', top: 0, left: 0 }}
       />
-    </div>
+    </>
   );
 };
 

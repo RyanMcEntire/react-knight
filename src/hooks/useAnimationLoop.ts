@@ -5,7 +5,13 @@ export const useAnimationLoop = (
   applyGravity: (deltaTime: number) => void,
   playerPosRef: React.MutableRefObject<{ x: number; y: number }>,
   velocity: { x: number; y: number },
-  draw: () => void
+  draw: () => void,
+  checkCollision: (
+    x: number,
+    y: number,
+    canvas: HTMLCanvasElement | null
+  ) => void,
+  offscreenCanvas: HTMLCanvasElement | null
 ) => {
   const animateRef = useRef<(timestamp: number) => void>(() => {});
   const lastFrameTimeRef = useRef<number | null>(null);
@@ -32,6 +38,12 @@ export const useAnimationLoop = (
     }
 
     playerPosRef.current.x += velocity.x * deltaTimeRef.current;
+
+    checkCollision(
+      playerPosRef.current.x,
+      playerPosRef.current.y,
+      offscreenCanvas
+    );
 
     draw();
     requestAnimationFrame(animateRef.current);

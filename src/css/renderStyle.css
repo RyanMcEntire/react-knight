@@ -1,5 +1,4 @@
 .background {
-  transform-origin: left top;
 }
 
 .pixelated {
@@ -18,4 +17,9 @@
 canvas {
   padding: 0;
   margin: 0;
+}
+
+body {
+  padding: 0;
+  margin: 0
 }

@@ -7,15 +7,28 @@ import {
   canvasHeight,
   canvasWidth,
   scale,
-  playerScale
+  playerScale,
 } from '../constants/gameData';
 import playerSprite from '../assets/characters/attack1_1.png';
 import { useAnimationLoop } from '../hooks/useAnimationLoop';
 
-const AnimatePlayer: React.FC = () => {
+type PlayerProps = {
+  offscreenCanvas: HTMLCanvasElement | null;
+};
+
+const Player = React.memo(({ offscreenCanvas }: PlayerProps) => {
+  console.log('Player render - offscreenCanvas:', offscreenCanvas);
+
+  useEffect(() => {
+    if (offscreenCanvas) {
+      // Do whatever you need with the offscreenCanvas
+      // For example, if you want to log when it's available:
+      console.log('offscreenCanvas is now available!');
+    }
+  }, [offscreenCanvas]);
   const [playerImageSrc] = useState<string>(playerSprite);
 
-  const playerPosRef = useRef({ x: 120, y: 100 });
+  const playerPosRef = useRef({ x: 100, y: 100 });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const {
@@ -33,6 +46,28 @@ const AnimatePlayer: React.FC = () => {
     scale * playerScale,
     playerImageSrc
   );
+
+  const checkCollision = (
+    x: number,
+    y: number,
+    canvas: HTMLCanvasElement | null
+  ) => {
+    if (canvas) {
+      console.log('offscreenCanvas exists');
+      const context = canvas.getContext('2d');
+      console.log('Before checking context');
+      if (context) {
+        console.log('Context exists');
+        const pixel = context?.getImageData(x, y, 1, 1).data;
+        console.log(
+          `Pixel RGBA: ${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]}`
+        );
+        if (pixel[0] === 255 && pixel[1] === 0 && pixel[2] === 0) {
+          console.log('collision detected');
+        }
+      }
+    }
+  };
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
     if (key === 'Space') {
@@ -62,18 +97,25 @@ const AnimatePlayer: React.FC = () => {
     applyGravity,
     playerPosRef,
     velocity,
-    drawPlayer
-  )
+    drawPlayer,
+    () =>
+      checkCollision(
+        playerPosRef.current.x,
+        playerPosRef.current.y,
+        offscreenCanvas
+      ),
+    offscreenCanvas
+  );
 
   useEffect(() => {
     if (isImageLoaded) {
       requestAnimationFrame(animateRef.current);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isImageLoaded]);
 
   return (
-    <div>
+    <>
       <canvas
         className="pixelated"
         ref={canvasRef}
@@ -81,8 +123,8 @@ const AnimatePlayer: React.FC = () => {
         height={canvasHeight}
         style={{ position: 'absolute', top: 0, left: 0 }}
       />
-    </div>
+    </>
   );
-};
+});
 
-export default AnimatePlayer;
+export default Player;
