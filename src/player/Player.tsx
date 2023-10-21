@@ -28,7 +28,7 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
   }, [offscreenCanvas]);
   const [playerImageSrc] = useState<string>(playerSprite);
 
-  const playerPosRef = useRef({ x: 100, y: 100 });
+  const playerPosRef = useRef({ x: 0, y: 0 });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const {
