@@ -6,7 +6,7 @@ export const gameWidth = 32;
 export const canvasHeight = tileSize * gameHeight;
 export const canvasWidth = tileSize * gameWidth;
 export const playerHeightOptions = {
-  1: 123,
+  1: 96,
   2: 822,
 };
 export const playerHeight = playerHeightOptions[scale];
