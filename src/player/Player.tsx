@@ -9,8 +9,9 @@ import {
   scale,
   playerScale,
 } from '../constants/gameData';
-import playerSprite from '../assets/characters/attack1_1.png';
+import playerSprite from '../assets/characters/idle-01.png';
 import { useAnimationLoop } from '../hooks/useAnimationLoop';
+import { checkCollision } from '../collision/checkCollision';
 
 type PlayerProps = {
   offscreenCanvas: HTMLCanvasElement | null;
@@ -47,29 +48,7 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
     playerImageSrc
   );
 
-  const checkCollision = (
-    x: number,
-    y: number,
-    canvas: HTMLCanvasElement | null
-  ) => {
-    if (canvas) {
-      const context = canvas.getContext('2d');
-      if (context) {
-        const pixel = context?.getImageData(x, y, 1, 1).data;
-        // console.log(
-        //   `Pixel RGBA: ${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]}`
-        // );
-        // console.log(
-        //   'player position',
-        //   playerPosRef.current.x,
-        //   playerPosRef.current.y
-        // );
-        if (pixel[0] === 255 && pixel[1] === 0 && pixel[2] === 0) {
-          console.log('collision detected');
-        }
-      }
-    }
-  };
+ 
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
     if (key === 'Space') {
