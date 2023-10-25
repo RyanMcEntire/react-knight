@@ -25,7 +25,6 @@ function Game() {
         <Collision
           levelData={levelData}
           onCanvasReady={(canvas) => {
-            console.log('Setting offscreen canvas ref!');
             offscreenCanvasRef.current = canvas;
           }}
         />

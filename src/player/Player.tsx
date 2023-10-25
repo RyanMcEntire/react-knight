@@ -18,15 +18,6 @@ type PlayerProps = {
 };
 
 const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
-  console.log('Player render - offscreenCanvas:', offscreenCanvas);
-
-  useEffect(() => {
-    if (offscreenCanvas) {
-      // Do whatever you need with the offscreenCanvas
-      // For example, if you want to log when it's available:
-      console.log('offscreenCanvas is now available!');
-    }
-  }, [offscreenCanvas]);
   const [playerImageSrc] = useState<string>(playerSprite);
 
   const playerPosRef = useRef({ x: 0, y: 0 });

@@ -36,14 +36,12 @@ const Collision = React.memo(({ levelData, onCanvasReady }: CollisionProps) => {
       })
     );
     onCanvasReady(offscreenCanvas);
-    if (offscreenCanvas) console.log('canvas ready!');
     const game = document.querySelector('.game');
     if (game) {
       game.appendChild(offscreenCanvas);
       offscreenCanvas.style.position = 'absolute';
       offscreenCanvas.style.top = '0px';
       offscreenCanvas.style.left = '0px';
-      console.log('game element found!');
     }
     // offscreenCanvas.style.transform = `translateX(-224) translateY(-192)`;
     return () => {
