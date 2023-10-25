@@ -11,6 +11,8 @@ import {
 } from '../constants/gameData';
 import playerSprite from '../assets/characters/idle-03.png';
 import { useAnimationLoop } from '../hooks/useAnimationLoop';
+import { getSpriteDataFromCanvas } from '../utilities/getSpriteDataFromCanvas';
+import { checkCollision } from '../collision/checkCollision';
 
 type PlayerProps = {
   offscreenCanvas: HTMLCanvasElement | null;
@@ -47,21 +49,21 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
     playerImageSrc
   );
 
-  const checkCollision = (
-    x: number,
-    y: number,
-    canvas: HTMLCanvasElement | null
-  ) => {
-    if (canvas) {
-      const context = canvas.getContext('2d');
-      if (context) {
-        const pixel = context?.getImageData(x, y, 1, 1).data;
-        if (pixel[0] === 255 && pixel[1] === 0 && pixel[2] === 0) {
-          console.log('collision detected');
-        }
-      }
-    }
-  };
+  // const checkCollision = (
+  //   x: number,
+  //   y: number,
+  //   canvas: HTMLCanvasElement | null
+  // ) => {
+  //   if (canvas) {
+  //     const context = canvas.getContext('2d');
+  //     if (context) {
+  //       const pixel = context?.getImageData(x, y, 1, 1).data;
+  //       if (pixel[0] === 255 && pixel[1] === 0 && pixel[2] === 0) {
+  //         console.log('collision detected');
+  //       }
+  //     }
+  //   }
+  // };
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
     if (key === 'Space') {
@@ -94,9 +96,10 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
     drawPlayer,
     () => 
       checkCollision(
+        offscreenCanvas,
+        getSpriteDataFromCanvas( canvasRef, playerImageSrc, 0, 0, playerImageSrc.width, playerImageSrc.height ),
         playerPosRef.current.x,
-        playerPosRef.current.y,
-        offscreenCanvas
+        playerPosRef.current.y
       ),
     offscreenCanvas
   );
