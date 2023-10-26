@@ -1,17 +1,15 @@
 import { useRef } from 'react';
 import { playerHeight, canvasHeight } from '../constants/gameData';
+import { Rect } from '../constants/types/types';
+import { handleCollision } from '../collision/handleCollision';
 
 export const useAnimationLoop = (
+  getPlayerHitbox: () => Rect,
+  collisionArray: Rect[],
   applyGravity: (deltaTime: number) => void,
   playerPosRef: React.MutableRefObject<{ x: number; y: number }>,
   velocity: { x: number; y: number },
-  draw: () => void,
-  checkCollision: (
-    x: number,
-    y: number,
-    canvas: HTMLCanvasElement | null
-  ) => void,
-  offscreenCanvas: HTMLCanvasElement | null
+  draw: () => void
 ) => {
   const animateRef = useRef<(timestamp: number) => void>(() => {});
   const lastFrameTimeRef = useRef<number | null>(null);
@@ -24,8 +22,20 @@ export const useAnimationLoop = (
 
     deltaTimeRef.current = (timestamp - lastFrameTimeRef.current) / 1000;
     lastFrameTimeRef.current = timestamp;
+    const playerHitBox = getPlayerHitbox();
+    handleCollision(playerHitBox, velocity, collisionArray, playerPosRef, 'x');
 
     applyGravity(deltaTimeRef.current);
+    playerPosRef.current.x += velocity.x * deltaTimeRef.current;
+
+    const newPlayerHitBox = getPlayerHitbox();
+    handleCollision(
+      newPlayerHitBox,
+      velocity,
+      collisionArray,
+      playerPosRef,
+      'y'
+    );
 
     const newBottomPosition =
       playerPosRef.current.y + playerHeight + velocity.y * deltaTimeRef.current;
@@ -37,13 +47,6 @@ export const useAnimationLoop = (
       playerPosRef.current.y += velocity.y * deltaTimeRef.current;
     }
 
-    playerPosRef.current.x += velocity.x * deltaTimeRef.current;
-
-    checkCollision(
-      playerPosRef.current.x,
-      playerPosRef.current.y,
-      offscreenCanvas
-    );
 
     draw();
     requestAnimationFrame(animateRef.current);

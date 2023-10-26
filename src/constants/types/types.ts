@@ -1,6 +1,8 @@
 export type ValidKeys = 'ArrowRight' | 'KeyD' | 'ArrowLeft' | 'KeyA' | 'Space';
 export type KeyCallback = (key: ValidKeys, isPressed: boolean) => void;
 
+export type Rect = {x: number, y: number, width: number, height: number}
+
 export interface BackgroundProps {
   imageSrc: string;
   position: {

@@ -3,7 +3,7 @@ import Background from './sprites/Background';
 import backgroundLevel1 from './assets/backgrounds/first-background-level.png';
 import './css/renderStyle.css';
 import { canvasHeight, canvasWidth } from './constants/gameData';
-import Collision from './collision/Collision';
+import CollisionCanvas from './collision/CollisionCanvas';
 import collisionsLevel1 from './constants/levelData/collisions-lvl-1';
 import { useRef } from 'react';
 
@@ -22,7 +22,7 @@ function Game() {
           height: canvasHeight,
         }}
       >
-        <Collision
+        <CollisionCanvas
           levelData={levelData}
           onCanvasReady={(canvas) => {
             offscreenCanvasRef.current = canvas;

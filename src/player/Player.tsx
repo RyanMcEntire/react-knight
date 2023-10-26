@@ -3,25 +3,34 @@ import { useKeyManager } from '../hooks/useKeysPressed';
 import { ValidKeys, KeysPressedState } from '../constants/types/types';
 import { usePlayerPhysics } from '../hooks/usePlayerPhysics';
 import { useCanvasDrawing } from '../hooks/useCanvasDrawing';
+import playerSprite from '../assets/characters/idle-01.png';
+import { useAnimationLoop } from '../hooks/useAnimationLoop';
 import {
   canvasHeight,
   canvasWidth,
   scale,
   playerScale,
+  playerSpriteHeight,
+  playerSpriteWidth,
 } from '../constants/gameData';
-import playerSprite from '../assets/characters/idle-01.png';
-import { useAnimationLoop } from '../hooks/useAnimationLoop';
-import { checkCollision } from '../collision/checkCollision';
+import collisionArray from '../collision/collisionBlockArray';
 
 type PlayerProps = {
   offscreenCanvas: HTMLCanvasElement | null;
 };
 
-const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
+const Player: React.FC<PlayerProps> = () => {
   const [playerImageSrc] = useState<string>(playerSprite);
 
-  const playerPosRef = useRef({ x: 0, y: 0 });
+  const playerPosRef = useRef({ x: 145, y: 225 }); // starting position
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const getPlayerHitbox = () => ({
+    x: playerPosRef.current.x,
+    y: playerPosRef.current.y,
+    width: playerSpriteWidth,
+    height: playerSpriteHeight,
+  });
 
   const {
     handleJump,
@@ -38,8 +47,6 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
     scale * playerScale,
     playerImageSrc
   );
-
- 
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
     if (key === 'Space') {
@@ -66,17 +73,12 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
   }, [keysPressed, setMoveDirection]);
 
   const animateRef = useAnimationLoop(
+    getPlayerHitbox,
+    collisionArray,
     applyGravity,
     playerPosRef,
     velocity,
-    drawPlayer,
-    () =>
-      checkCollision(
-        playerPosRef.current.x,
-        playerPosRef.current.y,
-        offscreenCanvas
-      ),
-    offscreenCanvas
+    drawPlayer
   );
 
   useEffect(() => {
