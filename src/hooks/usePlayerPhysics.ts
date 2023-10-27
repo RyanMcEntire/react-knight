@@ -8,7 +8,6 @@ import {
 } from '../constants/gameData';
 
 export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
-
   const setMoveDirection = (keysPressed: Record<ValidKeys, boolean>) => {
     const isLeftPressed = keysPressed.ArrowLeft || keysPressed.KeyA;
     const isRightPressed = keysPressed.ArrowRight || keysPressed.KeyD;
@@ -26,6 +25,7 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
   const previousVelocityRef = useRef({ x: 0, y: 0 });
   const gravityRef = useRef(baseGravity);
   const jumpKeyPressedRef = useRef(false);
+  const isGroundedRef = useRef(false);
 
   const handleJump = () => {
     if (
@@ -44,26 +44,36 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
 
   const handleLand = () => {
     if (!jumpKeyPressedRef.current && Math.abs(velocityRef.current.y) < 0.1) {
+      isGroundedRef.current = true;
+      velocityRef.current.y = 0;
       gravityRef.current = baseGravity;
     }
   };
 
+  const handleLeaveGround = () => {
+    isGroundedRef.current = false;
+  };
+
   const applyGravity = (deltaTime: number) => {
-    if (previousVelocityRef.current.y <= 0 && velocityRef.current.y > 0) {
-      gravityRef.current = megaGravity;
+    if (!isGroundedRef.current) {
+      if (previousVelocityRef.current.y <= 0 && velocityRef.current.y > 0) {
+        gravityRef.current = megaGravity;
+      }
+      previousVelocityRef.current.y = velocityRef.current.y;
+      velocityRef.current.y += gravityRef.current * deltaTime;
     }
-    previousVelocityRef.current.y = velocityRef.current.y;
-    velocityRef.current.y += gravityRef.current * deltaTime;
   };
 
   return {
     handleJump,
     handleRelease,
     handleLand,
+    handleLeaveGround,
     applyGravity,
     setMoveDirection,
     previousVelocity: previousVelocityRef.current,
     velocity: velocityRef.current,
     gravity: gravityRef.current,
+    isGrounded: isGroundedRef,
   };
 };

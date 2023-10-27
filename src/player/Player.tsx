@@ -22,23 +22,23 @@ type PlayerProps = {
 const Player: React.FC<PlayerProps> = () => {
   const [playerImageSrc] = useState<string>(playerSprite);
 
-  const playerPosRef = useRef({ x: 145, y: 225 }); // starting position
+  const playerPosRef = useRef({ x: 855, y: 320 }); // starting position
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const getPlayerHitbox = () => ({
-    x: playerPosRef.current.x,
-    y: playerPosRef.current.y,
     width: playerSpriteWidth,
     height: playerSpriteHeight,
   });
 
   const {
     handleJump,
+    handleLeaveGround,
     handleRelease,
     handleLand,
     applyGravity,
     setMoveDirection,
     velocity,
+    isGrounded
   } = usePlayerPhysics();
 
   const { draw: drawPlayer, isImageLoaded } = useCanvasDrawing(
@@ -52,6 +52,7 @@ const Player: React.FC<PlayerProps> = () => {
     if (key === 'Space') {
       if (isPressed) {
         handleJump();
+        handleLeaveGround();
       } else {
         handleRelease();
         handleLand();
@@ -78,7 +79,9 @@ const Player: React.FC<PlayerProps> = () => {
     applyGravity,
     playerPosRef,
     velocity,
-    drawPlayer
+    drawPlayer,
+    handleLand,
+    isGrounded
   );
 
   useEffect(() => {

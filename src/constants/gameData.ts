@@ -15,5 +15,5 @@ export const baseGravity = 9.8 * 45 * scale;
 export const megaGravity = baseGravity * 2.5;
 export const jumpVelocity = -190 * scale;
 export const playerScale = 1;
-export const playerSpriteHeight = 16;
-export const playerSpriteWidth = 8;
+export const playerSpriteHeight = 32 * scale;
+export const playerSpriteWidth = 32 * scale;
