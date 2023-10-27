@@ -71,9 +71,9 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
     handleLeaveGround,
     applyGravity,
     setMoveDirection,
-    previousVelocity: previousVelocityRef.current,
-    velocity: velocityRef.current,
-    gravity: gravityRef.current,
+    previousVelocityRef,
+    velocityRef,
+    gravityRef,
     isGrounded: isGroundedRef,
   };
 };

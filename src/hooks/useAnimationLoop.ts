@@ -1,16 +1,13 @@
 import { useRef } from 'react';
-import {
-  Dimension,
-  Rect,
-} from '../constants/types/types';
-import { sortCollisions, resolveCollision } from '../collision/handleCollision';
+import { Dimension, Rect, XY } from '../constants/types/types';
+import { handleCollisions } from '../collision/handleCollision';
 
 export const useAnimationLoop = (
   getPlayerHitbox: () => Dimension,
   collisionArray: Rect[],
   applyGravity: (deltaTime: number) => void,
-  playerPosRef: React.MutableRefObject<{ x: number; y: number }>,
-  velocity: { x: number; y: number },
+  playerPosRef: React.MutableRefObject<XY>,
+  velocityRef: React.MutableRefObject<XY>,
   draw: () => void,
   handleLand: () => void,
   isGrounded: React.MutableRefObject<boolean>
@@ -28,48 +25,31 @@ export const useAnimationLoop = (
     lastFrameTimeRef.current = timestamp;
 
     const playerHitBox = getPlayerHitbox();
-    const xCollisions = sortCollisions(
+    handleCollisions(
       playerHitBox,
-      velocity,
+      velocityRef,
       collisionArray,
       playerPosRef,
-      'x'
+      'y',
+      handleLand,
+      isGrounded
     );
-
-    const newPlayerHitBox = getPlayerHitbox();
-    const yCollisions = sortCollisions(
-      newPlayerHitBox,
-      velocity,
-      collisionArray,
-      playerPosRef,
-      'y'
-    );
-
-    const sortedCollisions = [...xCollisions, ...yCollisions].sort((a, b) => {
-      if (a.axis === 'x' && b.axis === 'y') return -1;
-      if (a.axis === 'y' && b.axis === 'x') return 1;
-      return 0;
-    });
-
-    for (const collision of sortedCollisions) {
-      resolveCollision(collision, handleLand, isGrounded);
-    }
 
     applyGravity(deltaTimeRef.current);
 
-    playerPosRef.current.x += velocity.x * deltaTimeRef.current;
-    playerPosRef.current.y += velocity.y * deltaTimeRef.current;
-
-    const postUpdateCollisions = sortCollisions(
-      getPlayerHitbox(),
-      velocity,
+    const newPlayerHitBox = getPlayerHitbox();
+    handleCollisions(
+      newPlayerHitBox,
+      velocityRef,
       collisionArray,
       playerPosRef,
-      'both'
+      'x',
+      handleLand,
+      isGrounded
     );
-    for (const collision of postUpdateCollisions) {
-      resolveCollision(collision, handleLand, isGrounded);
-    }
+
+    playerPosRef.current.y += velocityRef.current.y * deltaTimeRef.current;
+     playerPosRef.current.x += velocityRef.current.x * deltaTimeRef.current;
 
     draw();
     requestAnimationFrame(animateRef.current);

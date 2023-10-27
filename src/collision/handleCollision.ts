@@ -1,14 +1,15 @@
-import { Collision, Rect, XY } from '../constants/types/types';
+import { Dimension, Rect, XY } from '../constants/types/types';
 import { checkCollision } from './checkCollision';
 
-export function sortCollisions(
-  playerHitBox: { width: number; height: number },
-  velocity: XY,
+export function handleCollisions(
+  playerHitBox: Dimension,
+  velocityRef: React.MutableRefObject<XY>,
   collisionArray: Rect[],
-  playerPosRef: React.MutableRefObject<{ x: number; y: number }>,
-  axis: 'x' | 'y' | 'both'
+  playerPosRef: React.MutableRefObject<XY>,
+  axis: 'x' | 'y',
+  handleLand: () => void,
+  isGrounded: React.MutableRefObject<boolean>
 ) {
-  const collisions = [];
   for (let i = 0; i < collisionArray.length; i += 1) {
     const block = collisionArray[i];
     if (checkCollision(playerPosRef, playerHitBox, block)) {
@@ -17,83 +18,57 @@ export function sortCollisions(
         playerHitBox,
         block
       );
-
-      if (
-        (axis === 'x' &&
-          (collisionDirection === 'left' || collisionDirection === 'right')) ||
-        (axis === 'y' &&
-          (collisionDirection === 'top' || collisionDirection === 'bottom')) ||
-        axis === 'both'
-      ) {
-        collisions.push({
-          block,
-          collisionDirection,
-          playerPosRef,
-          playerHitBox,
-          velocity: { ...velocity },
-          axis,
-        });
+      console.log('collisionDirection', collisionDirection);
+      console.log('collision axis', axis)
+      console.log('isGrounded', isGrounded)
+      if (isGrounded && collisionDirection === 'bottom') {
+        return;
       }
+      switch (collisionDirection) {
+        case 'left':
+          if (axis === 'x') {
+            playerPosRef.current.x = block.x - playerHitBox.width;
+            velocityRef.current.x = 0;
+          }
+          break;
+        case 'right':
+          if (axis === 'x') {
+            playerPosRef.current.x = block.x + block.width;
+            velocityRef.current.x = 0;
+          }
+          break;
+        case 'top':
+          if (axis === 'y') {
+            playerPosRef.current.y = block.y - playerHitBox.height;
+            velocityRef.current.y = 0;
+          }
+          break;
+        case 'bottom':
+          if (axis === 'y') {
+            console.log(
+              'player position before bottom adjustment',
+              playerPosRef.current.y
+            );
+            playerPosRef.current.y = block.y + block.height;
+            velocityRef.current.y = 0;
+            handleLand();
+            console.log(
+              'player position After bottom adjustment',
+              playerPosRef.current.y
+            );
+          }
+          break;
+        default:
+          break;
+      }
+      return;
     }
   }
-  return collisions;
-}
-
-export function resolveCollision(
-  collision: Collision,
-  handleLand: () => void,
-  isGrounded: React.MutableRefObject<boolean>
-) {
-  const {
-    block,
-    collisionDirection,
-    playerPosRef,
-    playerHitBox,
-    velocity,
-    axis,
-  } = collision;
-  console.log('collision direction', collisionDirection);
-  console.log('playerPos before resolving:', playerPosRef);
-  if (isGrounded && collisionDirection === 'bottom') {
-    return;
-  }
-  switch (collisionDirection) {
-    case 'left':
-      if (axis === 'x' && velocity.x < 0) {
-        playerPosRef.current.x = block.x + block.width + 0.01;
-        velocity.x = 0;
-      }
-      break;
-    case 'right':
-      if (axis === 'x' && velocity.x > 0) {
-        playerPosRef.current.x = block.x - playerHitBox.width - 0.01;
-        velocity.x = 0;
-      }
-      break;
-    case 'top':
-      if (axis === 'y' && velocity.y < 0) {
-        playerPosRef.current.y = block.y + block.height + 0.01;
-        velocity.y = 0;
-      }
-      break;
-    case 'bottom':
-      if (axis === 'y' && velocity.y > 0) {
-        playerPosRef.current.y = block.y - playerHitBox.height - 0.01;
-        velocity.y = 0;
-        handleLand();
-        console.log('playerPos after resolving:', playerPosRef);
-      }
-      break;
-    default:
-      break;
-  }
-
-  return;
 }
 
 function getCollisionDirection(
-  playerPosRef: React.MutableRefObject<{ x: number; y: number }>,
-  playerHitBox: { width: number; height: number },
+  playerPosRef: React.MutableRefObject<XY>,
+  playerHitBox: Dimension,
   block: Rect
 ) {
   const dx =

@@ -12,3 +12,4 @@ export function checkCollision(
     playerPosRef.current.y + rect1.height >= rect2.y; 
     return isColliding;
 }
+

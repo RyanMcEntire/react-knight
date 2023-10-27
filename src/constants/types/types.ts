@@ -21,9 +21,9 @@ export type PlayerPhysicsOutputs = {
   handleLeaveGround: () => void;
   applyGravity: (deltaTime: number) => void;
   setMoveDirection: (keysPressed: Record<ValidKeys, boolean>) => void;
-  velocity: { x: number; y: number };
-  previousVelocity: { x: number; y: number };
-  gravity: number;
+  velocityRef: React.MutableRefObject<{ x: number; y: number }>;
+  previousVelocityRef: React.MutableRefObject<{ x: number; y: number }>;
+  gravityRef: React.MutableRefObject<number>;
   isGrounded: React.MutableRefObject<boolean>;
 };
 
@@ -33,5 +33,5 @@ export type Collision = {
   playerPosRef: React.MutableRefObject<{ x: number; y: number }>;
   playerHitBox: { width: number; height: number };
   velocity: { x: number; y: number };
-  axis: 'x' | 'y' | 'both';
+  axis: 'x' | 'y';
 };

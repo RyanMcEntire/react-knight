@@ -37,7 +37,7 @@ const Player: React.FC<PlayerProps> = () => {
     handleLand,
     applyGravity,
     setMoveDirection,
-    velocity,
+    velocityRef,
     isGrounded
   } = usePlayerPhysics();
 
@@ -78,7 +78,7 @@ const Player: React.FC<PlayerProps> = () => {
     collisionArray,
     applyGravity,
     playerPosRef,
-    velocity,
+    velocityRef,
     drawPlayer,
     handleLand,
     isGrounded
