@@ -35,6 +35,7 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
       jumpKeyPressedRef.current = true;
       velocityRef.current.y = jumpVelocity;
       gravityRef.current = baseGravity;
+      handleLeaveGround();
     }
   };
   const handleRelease = () => {

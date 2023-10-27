@@ -35,7 +35,7 @@ export const useAnimationLoop = (
       isGrounded
     );
 
-    applyGravity(deltaTimeRef.current);
+ applyGravity(deltaTimeRef.current);
 
     const newPlayerHitBox = getPlayerHitbox();
     handleCollisions(
@@ -47,7 +47,7 @@ export const useAnimationLoop = (
       handleLand,
       isGrounded
     );
-
+   
     playerPosRef.current.y += velocityRef.current.y * deltaTimeRef.current;
      playerPosRef.current.x += velocityRef.current.x * deltaTimeRef.current;
 
