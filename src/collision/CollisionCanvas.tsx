@@ -45,7 +45,7 @@ const CollisionCanvas = React.memo(
         offscreenCanvas.style.position = 'absolute';
         offscreenCanvas.style.top = '0px';
         offscreenCanvas.style.left = '0px';
-        offscreenCanvas.style.opacity = '0.3';
+        offscreenCanvas.style.opacity = '0';
       }
       return () => {
         offscreenCanvas.remove();

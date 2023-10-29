@@ -25,7 +25,7 @@ export const useCanvasDrawing = (
           canvasRef.current.height
         );
         context.save();
-        
+
         context.translate(objectPosition.x, objectPosition.y);
         context.scale(scale, scale);
         context.imageSmoothingEnabled = false;

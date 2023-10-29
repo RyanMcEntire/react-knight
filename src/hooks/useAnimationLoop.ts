@@ -1,9 +1,9 @@
 import { useRef } from 'react';
-import { Dimension, Rect, XY } from '../constants/types/types';
+import { PlayerHitBox, Rect, XY } from '../constants/types/types';
 import { handleCollisions } from '../collision/handleCollision';
 
 export const useAnimationLoop = (
-  getPlayerHitbox: () => Dimension,
+  getPlayerHitbox: () => PlayerHitBox,
   collisionArray: Rect[],
   applyGravity: (deltaTime: number) => void,
   playerPosRef: React.MutableRefObject<XY>,
@@ -24,6 +24,10 @@ export const useAnimationLoop = (
     deltaTimeRef.current = (timestamp - lastFrameTimeRef.current) / 1000;
     lastFrameTimeRef.current = timestamp;
 
+    playerPosRef.current.x += velocityRef.current.x * deltaTimeRef.current;
+    playerPosRef.current.y += velocityRef.current.y * deltaTimeRef.current;
+    
+
     const playerHitBox = getPlayerHitbox();
     handleCollisions(
       playerHitBox,
@@ -35,21 +39,18 @@ export const useAnimationLoop = (
       isGrounded
     );
 
-  applyGravity(deltaTimeRef.current);
+    applyGravity(deltaTimeRef.current);
 
-      const newPlayerHitBox = getPlayerHitbox();
-      handleCollisions(
-        newPlayerHitBox,
-        velocityRef,
-        collisionArray,
-        playerPosRef,
-        'y',
-        handleLand,
-        isGrounded
-      );
-    
-      playerPosRef.current.y += velocityRef.current.y * deltaTimeRef.current;
-      playerPosRef.current.x += velocityRef.current.x * deltaTimeRef.current;
+    const newPlayerHitBox = getPlayerHitbox();
+    handleCollisions(
+      newPlayerHitBox,
+      velocityRef,
+      collisionArray,
+      playerPosRef,
+      'y',
+      handleLand,
+      isGrounded
+    );
 
     draw();
     requestAnimationFrame(animateRef.current);

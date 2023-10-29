@@ -1,8 +1,9 @@
-import { Dimension, Rect, XY } from '../constants/types/types';
+import { groundCheckExpansion, hitboxOffset } from '../constants/gameData';
+import { Dimension, PlayerHitBox, Rect, XY } from '../constants/types/types';
 import { checkCollision } from './checkCollision';
 
 export function handleCollisions(
-  playerHitBox: Dimension,
+  playerHitBox: PlayerHitBox,
   velocityRef: React.MutableRefObject<XY>,
   collisionArray: Rect[],
   playerPosRef: React.MutableRefObject<XY>,
@@ -12,12 +13,8 @@ export function handleCollisions(
 ) {
   for (let i = 0; i < collisionArray.length; i += 1) {
     const block = collisionArray[i];
-    if (checkCollision(playerPosRef, playerHitBox, block)) {
-      const collisionDirection = getCollisionDirection(
-        playerPosRef,
-        playerHitBox,
-        block
-      );
+    if (checkCollision(playerHitBox, block)) {
+      const collisionDirection = getCollisionDirection(playerHitBox, block);
       // if (isGroundedRef && collisionDirection === 'bottom') {
       //   return;
       // }
@@ -25,7 +22,7 @@ export function handleCollisions(
       switch (collisionDirection) {
         case 'left':
           if (axis === 'x') {
-            playerPosRef.current.x = block.x + block.width + 0.001;
+            playerPosRef.current.x = block.x + playerHitBox.width + 0.001;
             velocityRef.current.x = 0;
           }
           break;
@@ -35,10 +32,11 @@ export function handleCollisions(
               'playerPosition before right collision:',
               playerPosRef.current
             );
-            playerPosRef.current.x = block.x - playerHitBox.width - 0.001;
+            playerPosRef.current.x =
+              block.x - playerHitBox.width - hitboxOffset.left - 0.001;
             velocityRef.current.x = 0;
             console.log(
-              'playerPosition before after collision:',
+              'playerPosition after right collision:',
               playerPosRef.current
             );
           }
@@ -74,17 +72,12 @@ export function handleCollisions(
   }
 }
 
-function getCollisionDirection(
-  playerPosRef: React.MutableRefObject<XY>,
-  playerHitBox: Dimension,
-  block: Rect
-) {
+function getCollisionDirection(playerHitBox: PlayerHitBox, block: Rect) {
   const dx =
-    playerPosRef.current.x +
-    playerHitBox.width / 2 -
-    (block.x + block.width / 2);
+    playerHitBox.x + playerHitBox.width / 2 - (block.x + block.width / 2);
   const dy =
-    playerPosRef.current.y +
+    playerHitBox.y -
+    groundCheckExpansion +
     playerHitBox.height / 2 -
     (block.y + block.height / 2);
 

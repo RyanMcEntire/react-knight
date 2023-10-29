@@ -35,3 +35,10 @@ export type Collision = {
   velocity: { x: number; y: number };
   axis: 'x' | 'y';
 };
+
+export type PlayerHitBox = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};

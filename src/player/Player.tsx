@@ -12,6 +12,8 @@ import {
   playerScale,
   playerSpriteHeight,
   playerSpriteWidth,
+  groundCheckExpansion,
+  hitboxOffset,
 } from '../constants/gameData';
 import collisionArray from '../collision/collisionBlockArray';
 
@@ -25,10 +27,22 @@ const Player: React.FC<PlayerProps> = () => {
   const playerPosRef = useRef({ x: 855, y: 320 }); // starting position
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const getPlayerHitbox = () => ({
-    width: playerSpriteWidth,
-    height: playerSpriteHeight,
-  });
+  const getPlayerHitbox = (isGroundCheck: boolean = false) => {
+    const hitbox = {
+      x: playerPosRef.current.x + hitboxOffset.left,
+      y: playerPosRef.current.y,
+      width: playerSpriteWidth - (hitboxOffset.left + hitboxOffset.right),
+      height: playerSpriteHeight,
+    };
+    if (isGroundCheck) {
+      hitbox.height += groundCheckExpansion;
+    }
+    return hitbox
+  };
+  // const getPlayerHitbox = () => ({width: playerSpriteWidth,
+  //     height: playerSpriteHeight
+  
+  // });
 
   const {
     handleJump,
@@ -48,9 +62,8 @@ const Player: React.FC<PlayerProps> = () => {
   );
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
-
     if (key === 'Space') {
-      console.log('player positioning before jump', playerPosRef.current)
+      console.log('player positioning before jump', playerPosRef.current);
       if (isPressed) {
         playerPosRef.current.y += 0.01;
         handleJump();
@@ -100,7 +113,11 @@ const Player: React.FC<PlayerProps> = () => {
         ref={canvasRef}
         width={canvasWidth}
         height={canvasHeight}
-        style={{ position: 'absolute', top: 0, left: 0 }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+        }}
       />
     </>
   );

@@ -30,7 +30,7 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
   const handleJump = () => {
     console.log('jumped!');
     if (
-      Math.abs(velocityRef.current.y) < 0.15 &&
+      isGroundedRef.current &&
       jumpKeyPressedRef.current === false
     ) {
       jumpKeyPressedRef.current = true;

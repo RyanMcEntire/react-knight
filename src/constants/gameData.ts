@@ -17,3 +17,8 @@ export const jumpVelocity = -190 * scale;
 export const playerScale = 1;
 export const playerSpriteHeight = 32 * scale;
 export const playerSpriteWidth = 32 * scale;
+export const groundCheckExpansion = 2;
+export const hitboxOffset = {
+  left: 7 * scale,
+  right: 14 * scale,
+};
