@@ -28,14 +28,18 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
   const isGroundedRef = useRef(false);
 
   const handleJump = () => {
+    console.log('jumped!');
     if (
-      Math.abs(velocityRef.current.y) < 0.1 &&
+      Math.abs(velocityRef.current.y) < 0.15 &&
       jumpKeyPressedRef.current === false
     ) {
       jumpKeyPressedRef.current = true;
-      velocityRef.current.y = jumpVelocity;
-      gravityRef.current = baseGravity;
       handleLeaveGround();
+      velocityRef.current.y = jumpVelocity;
+      console.log('velocity', velocityRef.current.y)
+      gravityRef.current = baseGravity;
+      console.log('gravity', gravityRef)
+      
     }
   };
   const handleRelease = () => {
@@ -46,24 +50,26 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
   const handleLand = () => {
     if (!jumpKeyPressedRef.current && Math.abs(velocityRef.current.y) < 0.1) {
       isGroundedRef.current = true;
-      velocityRef.current.y = 0;
+      // velocityRef.current.y = 0;
       gravityRef.current = baseGravity;
     }
   };
 
   const handleLeaveGround = () => {
+    console.log('isGrounded before', isGroundedRef.current);
     isGroundedRef.current = false;
+    console.log('isGrounded after', isGroundedRef.current);
   };
 
   const applyGravity = (deltaTime: number) => {
-    if (!isGroundedRef.current) {
-      if (previousVelocityRef.current.y <= 0 && velocityRef.current.y > 0) {
+    // if (!isGroundedRef.current) {
+      if (previousVelocityRef.current.y <= 0.015 && velocityRef.current.y > 0) {
         gravityRef.current = megaGravity;
       }
       previousVelocityRef.current.y = velocityRef.current.y;
       velocityRef.current.y += gravityRef.current * deltaTime;
     }
-  };
+  // };
 
   return {
     handleJump,
@@ -75,6 +81,6 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
     previousVelocityRef,
     velocityRef,
     gravityRef,
-    isGrounded: isGroundedRef,
+    isGroundedRef,
   };
 };

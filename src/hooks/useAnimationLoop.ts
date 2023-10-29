@@ -30,26 +30,26 @@ export const useAnimationLoop = (
       velocityRef,
       collisionArray,
       playerPosRef,
-      'y',
-      handleLand,
-      isGrounded
-    );
-
- applyGravity(deltaTimeRef.current);
-
-    const newPlayerHitBox = getPlayerHitbox();
-    handleCollisions(
-      newPlayerHitBox,
-      velocityRef,
-      collisionArray,
-      playerPosRef,
       'x',
       handleLand,
       isGrounded
     );
-   
-    playerPosRef.current.y += velocityRef.current.y * deltaTimeRef.current;
-     playerPosRef.current.x += velocityRef.current.x * deltaTimeRef.current;
+
+  applyGravity(deltaTimeRef.current);
+
+      const newPlayerHitBox = getPlayerHitbox();
+      handleCollisions(
+        newPlayerHitBox,
+        velocityRef,
+        collisionArray,
+        playerPosRef,
+        'y',
+        handleLand,
+        isGrounded
+      );
+    
+      playerPosRef.current.y += velocityRef.current.y * deltaTimeRef.current;
+      playerPosRef.current.x += velocityRef.current.x * deltaTimeRef.current;
 
     draw();
     requestAnimationFrame(animateRef.current);

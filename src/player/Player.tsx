@@ -32,13 +32,12 @@ const Player: React.FC<PlayerProps> = () => {
 
   const {
     handleJump,
-    handleLeaveGround,
     handleRelease,
     handleLand,
     applyGravity,
     setMoveDirection,
     velocityRef,
-    isGrounded
+    isGroundedRef,
   } = usePlayerPhysics();
 
   const { draw: drawPlayer, isImageLoaded } = useCanvasDrawing(
@@ -49,14 +48,17 @@ const Player: React.FC<PlayerProps> = () => {
   );
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
+
     if (key === 'Space') {
+      console.log('player positioning before jump', playerPosRef.current)
       if (isPressed) {
+        playerPosRef.current.y += 0.01;
         handleJump();
-        handleLeaveGround();
       } else {
         handleRelease();
         handleLand();
       }
+      console.log('player positioning after jump', playerPosRef.current);
     }
   };
 
@@ -81,7 +83,7 @@ const Player: React.FC<PlayerProps> = () => {
     velocityRef,
     drawPlayer,
     handleLand,
-    isGrounded
+    isGroundedRef
   );
 
   useEffect(() => {

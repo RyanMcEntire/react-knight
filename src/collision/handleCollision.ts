@@ -8,7 +8,7 @@ export function handleCollisions(
   playerPosRef: React.MutableRefObject<XY>,
   axis: 'x' | 'y',
   handleLand: () => void,
-  isGrounded: React.MutableRefObject<boolean>
+  isGroundedRef: React.MutableRefObject<boolean>
 ) {
   for (let i = 0; i < collisionArray.length; i += 1) {
     const block = collisionArray[i];
@@ -18,71 +18,53 @@ export function handleCollisions(
         playerHitBox,
         block
       );
-      console.log('collisionDirection', collisionDirection);
-      console.log('collision axis', axis);
-      console.log('isGrounded', isGrounded);
-      console.log(
-        'player position before adjustment',
-        playerPosRef.current.y,
-        playerPosRef.current.x
-      );
-      // if (isGrounded && collisionDirection === 'bottom') {
+      // if (isGroundedRef && collisionDirection === 'bottom') {
       //   return;
       // }
+      console.log('axis', axis);
       switch (collisionDirection) {
         case 'left':
           if (axis === 'x') {
             playerPosRef.current.x = block.x + block.width + 0.001;
             velocityRef.current.x = 0;
           }
-          console.log(
-            'player position and direction after adjustment',
-            playerPosRef.current.y,
-            playerPosRef.current.x,
-            collisionDirection
-          );
           break;
         case 'right':
           if (axis === 'x') {
+            console.log(
+              'playerPosition before right collision:',
+              playerPosRef.current
+            );
             playerPosRef.current.x = block.x - playerHitBox.width - 0.001;
             velocityRef.current.x = 0;
+            console.log(
+              'playerPosition before after collision:',
+              playerPosRef.current
+            );
           }
-          console.log(
-            'player position and direction after adjustment',
-            playerPosRef.current.y,
-            playerPosRef.current.x,
-            collisionDirection
-          );
           break;
         case 'top':
           if (axis === 'y') {
             playerPosRef.current.y = block.y + playerHitBox.height + 0.001;
             velocityRef.current.y = 0;
           }
-          console.log(
-            'player position and direction after adjustment',
-            playerPosRef.current.y,
-            playerPosRef.current.x,
-            collisionDirection
-          );
           break;
         case 'bottom':
           if (axis === 'y') {
             console.log(
-              'player position before bottom adjustment',
+              'bottom collision before posref',
+              playerPosRef.current.x,
               playerPosRef.current.y
             );
-            playerPosRef.current.y =
-              block.y - block.height - block.height + 0.001;
+            playerPosRef.current.y = block.y - block.height * 2 + 0.001;
             velocityRef.current.y = 0;
             handleLand();
+            console.log(
+              'bottom collision after posref',
+              playerPosRef.current.x,
+              playerPosRef.current.y
+            );
           }
-          console.log(
-            'player position and direction after adjustment',
-            playerPosRef.current.y,
-            playerPosRef.current.x,
-            collisionDirection
-          );
           break;
         default:
           break;

@@ -24,7 +24,7 @@ export type PlayerPhysicsOutputs = {
   velocityRef: React.MutableRefObject<{ x: number; y: number }>;
   previousVelocityRef: React.MutableRefObject<{ x: number; y: number }>;
   gravityRef: React.MutableRefObject<number>;
-  isGrounded: React.MutableRefObject<boolean>;
+  isGroundedRef: React.MutableRefObject<boolean>;
 };
 
 export type Collision = {
