@@ -1,3 +1,5 @@
+import React from 'react';
+
 export type ValidKeys = 'ArrowRight' | 'KeyD' | 'ArrowLeft' | 'KeyA' | 'Space';
 export type KeyCallback = (key: ValidKeys, isPressed: boolean) => void;
 
@@ -14,6 +16,17 @@ export interface BackgroundProps {
 
 export type KeysPressedState = Record<ValidKeys, boolean>;
 
+export type UseCanvasDrawingProps = {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  objectPosition: { x: number; y: number };
+  scale: number;
+  imgSrc: string;
+  customDraw?: (
+    context: CanvasRenderingContext2D,
+    img: HTMLImageElement
+  ) => void;
+};
+
 export type PlayerPhysicsOutputs = {
   handleJump: () => void;
   handleRelease: () => void;
@@ -25,6 +38,15 @@ export type PlayerPhysicsOutputs = {
   previousVelocityRef: React.MutableRefObject<{ x: number; y: number }>;
   gravityRef: React.MutableRefObject<number>;
   isGroundedRef: React.MutableRefObject<boolean>;
+  playerDirectionRef: React.MutableRefObject<string>;
+};
+
+export type DrawPlayerCustomProps = {
+  context: CanvasRenderingContext2D;
+  img: HTMLImageElement;
+  playerDirection: string;
+  playerWidth: number;
+  playerHeight: number;
 };
 
 export type Collision = {

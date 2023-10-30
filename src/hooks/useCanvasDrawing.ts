@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
+import { UseCanvasDrawingProps } from '../constants/types/types';
 
-export const useCanvasDrawing = (
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  objectPosition: { x: number; y: number },
-  scale: number,
-  imgSrc: string
-) => {
+export const useCanvasDrawing = ({
+  canvasRef,
+  objectPosition,
+  scale,
+  imgSrc,
+  customDraw,
+}: UseCanvasDrawingProps) => {
   const [isImageLoaded, setImageLoaded] = useState(false);
   const img = useMemo(() => {
     const image = new Image();
@@ -29,8 +31,13 @@ export const useCanvasDrawing = (
         context.translate(objectPosition.x, objectPosition.y);
         context.scale(scale, scale);
         context.imageSmoothingEnabled = false;
+
         if (img.complete) {
-          context.drawImage(img, 0, 0);
+          if (customDraw) {
+            customDraw(context, img);
+          } else {
+            context.drawImage(img, 0, 0);
+          }
         }
         context.restore();
       }

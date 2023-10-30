@@ -8,14 +8,18 @@ import {
 } from '../constants/gameData';
 
 export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
+  const playerDirectionRef = useRef('right');
+
   const setMoveDirection = (keysPressed: Record<ValidKeys, boolean>) => {
     const isLeftPressed = keysPressed.ArrowLeft || keysPressed.KeyA;
     const isRightPressed = keysPressed.ArrowRight || keysPressed.KeyD;
 
     if (isLeftPressed && !isRightPressed) {
       velocityRef.current.x = -latMovementSpeed;
+      playerDirectionRef.current = 'left';
     } else if (!isLeftPressed && isRightPressed) {
       velocityRef.current.x = latMovementSpeed;
+      playerDirectionRef.current = 'right';
     } else {
       velocityRef.current.x = 0;
     }
@@ -29,17 +33,13 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
 
   const handleJump = () => {
     console.log('jumped!');
-    if (
-      isGroundedRef.current &&
-      jumpKeyPressedRef.current === false
-    ) {
+    if (isGroundedRef.current && jumpKeyPressedRef.current === false) {
       jumpKeyPressedRef.current = true;
       handleLeaveGround();
       velocityRef.current.y = jumpVelocity;
-      console.log('velocity', velocityRef.current.y)
+      console.log('velocity', velocityRef.current.y);
       gravityRef.current = baseGravity;
-      console.log('gravity', gravityRef)
-      
+      console.log('gravity', gravityRef);
     }
   };
   const handleRelease = () => {
@@ -63,12 +63,12 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
 
   const applyGravity = (deltaTime: number) => {
     // if (!isGroundedRef.current) {
-      if (previousVelocityRef.current.y <= 0.015 && velocityRef.current.y > 0) {
-        gravityRef.current = megaGravity;
-      }
-      previousVelocityRef.current.y = velocityRef.current.y;
-      velocityRef.current.y += gravityRef.current * deltaTime;
+    if (previousVelocityRef.current.y <= 0.015 && velocityRef.current.y > 0) {
+      gravityRef.current = megaGravity;
     }
+    previousVelocityRef.current.y = velocityRef.current.y;
+    velocityRef.current.y += gravityRef.current * deltaTime;
+  };
   // };
 
   return {
@@ -82,5 +82,6 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
     velocityRef,
     gravityRef,
     isGroundedRef,
+    playerDirectionRef
   };
 };

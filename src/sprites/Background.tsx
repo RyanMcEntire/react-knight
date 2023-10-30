@@ -8,10 +8,10 @@ const Background: React.FC<BackgroundProps> = ({ imageSrc, position }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const { draw, isImageLoaded } = useCanvasDrawing(
-    canvasRef,
-    position,
+    {canvasRef,
+    objectPosition: position,
     scale,
-    imageSrc
+    imgSrc: imageSrc}
   );
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { groundCheckExpansion, hitboxOffset } from '../constants/gameData';
-import { Dimension, PlayerHitBox, Rect, XY } from '../constants/types/types';
+import { PlayerHitBox, Rect, XY } from '../constants/types/types';
 import { checkCollision } from './checkCollision';
 
 export function handleCollisions(

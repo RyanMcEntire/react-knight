@@ -12,11 +12,14 @@ import {
   playerScale,
   playerSpriteHeight,
   playerSpriteWidth,
+  playerSpriteTrueHeight,
+  playerSpriteTrueWidth,
   groundCheckExpansion,
   hitboxOffset,
   startingPosition,
 } from '../constants/gameData';
 import collisionArray from '../collision/collisionBlockArray';
+import { drawPlayerCustom } from './drawPlayerCustom';
 
 type PlayerProps = {
   offscreenCanvas: HTMLCanvasElement | null;
@@ -38,11 +41,11 @@ const Player: React.FC<PlayerProps> = () => {
     if (isGroundCheck) {
       hitbox.height += groundCheckExpansion;
     }
-    return hitbox
+    return hitbox;
   };
   // const getPlayerHitbox = () => ({width: playerSpriteWidth,
   //     height: playerSpriteHeight
-  
+
   // });
 
   const {
@@ -53,14 +56,23 @@ const Player: React.FC<PlayerProps> = () => {
     setMoveDirection,
     velocityRef,
     isGroundedRef,
+    playerDirectionRef,
   } = usePlayerPhysics();
 
-  const { draw: drawPlayer, isImageLoaded } = useCanvasDrawing(
-    canvasRef,
-    playerPosRef.current,
-    scale * playerScale,
-    playerImageSrc
-  );
+  const { draw: drawPlayer, isImageLoaded } = useCanvasDrawing({
+    canvasRef: canvasRef,
+    objectPosition: playerPosRef.current,
+    scale: scale * playerScale,
+    imgSrc: playerImageSrc,
+    customDraw: (context, img) =>
+      drawPlayerCustom({
+        context,
+        img,
+        playerDirection: playerDirectionRef.current,
+        playerWidth: playerSpriteTrueWidth,
+        playerHeight: playerSpriteTrueHeight,
+      }),
+  });
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
     if (key === 'Space') {
