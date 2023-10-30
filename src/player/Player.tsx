@@ -14,6 +14,7 @@ import {
   playerSpriteWidth,
   groundCheckExpansion,
   hitboxOffset,
+  startingPosition,
 } from '../constants/gameData';
 import collisionArray from '../collision/collisionBlockArray';
 
@@ -24,7 +25,7 @@ type PlayerProps = {
 const Player: React.FC<PlayerProps> = () => {
   const [playerImageSrc] = useState<string>(playerSprite);
 
-  const playerPosRef = useRef({ x: 855, y: 320 }); // starting position
+  const playerPosRef = useRef(startingPosition); // starting position
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const getPlayerHitbox = (isGroundCheck: boolean = false) => {
