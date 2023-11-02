@@ -5,11 +5,12 @@ import './css/renderStyle.css';
 import { canvasHeight, canvasWidth } from './constants/gameData';
 import CollisionCanvas from './collision/CollisionCanvas';
 import collisionsLevel1 from './constants/levelData/collisions-lvl-1';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 function Game() {
+  const [isCanvasReady, setIsCanvasReady] = useState(false);
   const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
-
+  console.log('game component rendered');
   const levelData = collisionsLevel1;
 
   return (
@@ -26,6 +27,7 @@ function Game() {
           levelData={levelData}
           onCanvasReady={(canvas) => {
             offscreenCanvasRef.current = canvas;
+            setIsCanvasReady(true);
           }}
         />
         <Background imageSrc={backgroundLevel1} position={{ x: 0, y: 0 }} />

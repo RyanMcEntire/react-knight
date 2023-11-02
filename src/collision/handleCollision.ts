@@ -18,7 +18,6 @@ export function handleCollisions(
       // if (isGroundedRef && collisionDirection === 'bottom') {
       //   return;
       // }
-      console.log('axis', axis);
       switch (collisionDirection) {
         case 'left':
           if (axis === 'x') {
@@ -28,17 +27,11 @@ export function handleCollisions(
           break;
         case 'right':
           if (axis === 'x') {
-            console.log(
-              'playerPosition before right collision:',
-              playerPosRef.current
-            );
+            
             playerPosRef.current.x =
               block.x - playerHitBox.width - hitboxOffset.left - 0.001;
             velocityRef.current.x = 0;
-            console.log(
-              'playerPosition after right collision:',
-              playerPosRef.current
-            );
+            
           }
           break;
         case 'top':
@@ -49,19 +42,11 @@ export function handleCollisions(
           break;
         case 'bottom':
           if (axis === 'y') {
-            console.log(
-              'bottom collision before posref',
-              playerPosRef.current.x,
-              playerPosRef.current.y
-            );
+            
             playerPosRef.current.y = block.y - block.height * 2 + 0.001;
             velocityRef.current.y = 0;
             handleLand();
-            console.log(
-              'bottom collision after posref',
-              playerPosRef.current.x,
-              playerPosRef.current.y
-            );
+            
           }
           break;
         default:

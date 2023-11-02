@@ -26,6 +26,7 @@ type PlayerProps = {
 };
 
 const Player: React.FC<PlayerProps> = () => {
+  console.log('Player component rendered')
   const [playerImageSrc] = useState<string>(playerSprite);
 
   const playerPosRef = useRef(startingPosition); // starting position
@@ -73,10 +74,10 @@ const Player: React.FC<PlayerProps> = () => {
         playerHeight: playerSpriteTrueHeight,
       }),
   });
+  console.log('canvasRef', canvasRef);
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
     if (key === 'Space') {
-      console.log('player positioning before jump', playerPosRef.current);
       if (isPressed) {
         playerPosRef.current.y += 0.01;
         handleJump();
@@ -84,7 +85,6 @@ const Player: React.FC<PlayerProps> = () => {
         handleRelease();
         handleLand();
       }
-      console.log('player positioning after jump', playerPosRef.current);
     }
   };
 
