@@ -16,6 +16,7 @@ export const useAnimationLoop = (
   const lastFrameTimeRef = useRef<number | null>(null);
   const deltaTimeRef = useRef<number>(0);
 
+  
   animateRef.current = (timestamp: number) => {
     if (lastFrameTimeRef.current === null) {
       lastFrameTimeRef.current = timestamp;

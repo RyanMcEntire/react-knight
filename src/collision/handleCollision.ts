@@ -46,7 +46,7 @@ export function handleCollisions(
             playerPosRef.current.y = block.y - block.height * 2 + 0.001;
             velocityRef.current.y = 0;
             handleLand();
-            
+            isGroundedRef.current = true;
           }
           break;
         default:

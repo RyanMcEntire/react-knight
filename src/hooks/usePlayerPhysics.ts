@@ -32,14 +32,11 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
   const isGroundedRef = useRef(false);
 
   const handleJump = () => {
-    console.log('jumped!');
     if (isGroundedRef.current && jumpKeyPressedRef.current === false) {
       jumpKeyPressedRef.current = true;
       handleLeaveGround();
       velocityRef.current.y = jumpVelocity;
-      console.log('velocity', velocityRef.current.y);
       gravityRef.current = baseGravity;
-      console.log('gravity', gravityRef);
     }
   };
   const handleRelease = () => {
@@ -56,9 +53,7 @@ export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
   };
 
   const handleLeaveGround = () => {
-    console.log('isGrounded before', isGroundedRef.current);
     isGroundedRef.current = false;
-    console.log('isGrounded after', isGroundedRef.current);
   };
 
   const applyGravity = (deltaTime: number) => {

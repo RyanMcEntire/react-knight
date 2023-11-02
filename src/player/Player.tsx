@@ -25,13 +25,15 @@ type PlayerProps = {
   offscreenCanvas: HTMLCanvasElement | null;
 };
 
-const Player: React.FC<PlayerProps> = () => {
+const Player: React.FC<PlayerProps> = ({offscreenCanvas}) => {
   console.log('Player component rendered')
+  const [isLoading, setIsLoading] = useState(true);
   const [playerImageSrc] = useState<string>(playerSprite);
 
   const playerPosRef = useRef(startingPosition); // starting position
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  
   const getPlayerHitbox = (isGroundCheck: boolean = false) => {
     const hitbox = {
       x: playerPosRef.current.x + hitboxOffset.left,
@@ -74,7 +76,6 @@ const Player: React.FC<PlayerProps> = () => {
         playerHeight: playerSpriteTrueHeight,
       }),
   });
-  console.log('canvasRef', canvasRef);
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
     if (key === 'Space') {
@@ -119,6 +120,15 @@ const Player: React.FC<PlayerProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isImageLoaded]);
 
+   useEffect(() => {
+     if (offscreenCanvas) {
+       setIsLoading(false);
+     }
+   }, [offscreenCanvas]);
+
+   if (isLoading) {
+     return <div>Loading...</div>;
+   }
   return (
     <>
       <canvas
