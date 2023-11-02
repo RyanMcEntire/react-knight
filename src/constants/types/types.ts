@@ -18,13 +18,9 @@ export type KeysPressedState = Record<ValidKeys, boolean>;
 
 export type UseCanvasDrawingProps = {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  objectPosition: { x: number; y: number };
+  objectPosition: XY;
   scale: number;
-  imgSrc: string;
-  customDraw?: (
-    context: CanvasRenderingContext2D,
-    img: HTMLImageElement
-  ) => void;
+  spriteAnimationRef: React.MutableRefObject<SpriteAnimationState>;
 };
 
 export type PlayerPhysicsOutputs = {
@@ -63,4 +59,29 @@ export type PlayerHitBox = {
   y: number;
   width: number;
   height: number;
+};
+
+export interface Animation {
+  src: string;
+  frameCount: number;
+}
+
+export interface SpriteAnimationState {
+  name: string;
+  frame: number;
+  animations: Record<string, LoadedAnimation>;
+}
+
+export interface LoadedAnimation {
+  img: HTMLImageElement;
+  frameWidth: number;
+  frameHeight: number;
+  frameCount: number;
+}
+
+export type UseImageDrawingProps = {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  objectPosition: XY;
+  scale: number;
+  imgSrc: string;
 };

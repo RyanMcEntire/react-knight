@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useKeyManager } from '../hooks/useKeysPressed';
-import { ValidKeys, KeysPressedState } from '../constants/types/types';
+import {
+  ValidKeys,
+  KeysPressedState,
+  SpriteAnimationState,
+} from '../constants/types/types';
 import { usePlayerPhysics } from '../hooks/usePlayerPhysics';
 import { useCanvasDrawing } from '../hooks/useCanvasDrawing';
-import playerSprite from '../assets/characters/idle-01.png';
 import { useAnimationLoop } from '../hooks/useAnimationLoop';
 import {
   canvasHeight,
@@ -12,28 +15,51 @@ import {
   playerScale,
   playerSpriteHeight,
   playerSpriteWidth,
-  playerSpriteTrueHeight,
-  playerSpriteTrueWidth,
   groundCheckExpansion,
   hitboxOffset,
   startingPosition,
 } from '../constants/gameData';
 import collisionArray from '../collision/collisionBlockArray';
-import { drawPlayerCustom } from './drawPlayerCustom';
+import { loadAllAnimations } from '../utilities/handleAnimationData';
 
 type PlayerProps = {
   offscreenCanvas: HTMLCanvasElement | null;
 };
 
-const Player: React.FC<PlayerProps> = ({offscreenCanvas}) => {
-  console.log('Player component rendered')
+const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
+  console.log('Player component rendered');
   const [isLoading, setIsLoading] = useState(true);
-  const [playerImageSrc] = useState<string>(playerSprite);
 
   const playerPosRef = useRef(startingPosition); // starting position
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const spriteAnimationRef = useRef<SpriteAnimationState>({
+    name: 'idle',
+    frame: 1,
+    animations: {},
+  });
 
-  
+  useEffect(() => {
+    loadAllAnimations()
+      .then((animations) => {
+        if (!animations['idle']) {
+          console.error('Animation data for "idle" is missing');
+          return;
+        }
+        if (
+          !animations['idle'].img.complete ||
+          animations['idle'].img.naturalHeight === 0
+        ) {
+          console.error('Failed to load image for animation "idle"');
+          return;
+        }
+        spriteAnimationRef.current.animations = animations;
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error('Failed to load animations', error);
+      });
+  }, []);
+
   const getPlayerHitbox = (isGroundCheck: boolean = false) => {
     const hitbox = {
       x: playerPosRef.current.x + hitboxOffset.left,
@@ -59,22 +85,13 @@ const Player: React.FC<PlayerProps> = ({offscreenCanvas}) => {
     setMoveDirection,
     velocityRef,
     isGroundedRef,
-    playerDirectionRef,
   } = usePlayerPhysics();
 
-  const { draw: drawPlayer, isImageLoaded } = useCanvasDrawing({
-    canvasRef: canvasRef,
+  const { draw } = useCanvasDrawing({
+    canvasRef,
     objectPosition: playerPosRef.current,
     scale: scale * playerScale,
-    imgSrc: playerImageSrc,
-    customDraw: (context, img) =>
-      drawPlayerCustom({
-        context,
-        img,
-        playerDirection: playerDirectionRef.current,
-        playerWidth: playerSpriteTrueWidth,
-        playerHeight: playerSpriteTrueHeight,
-      }),
+    spriteAnimationRef,
   });
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
@@ -108,27 +125,28 @@ const Player: React.FC<PlayerProps> = ({offscreenCanvas}) => {
     applyGravity,
     playerPosRef,
     velocityRef,
-    drawPlayer,
+    draw,
     handleLand,
-    isGroundedRef
+    isGroundedRef,
+    spriteAnimationRef
   );
 
   useEffect(() => {
-    if (isImageLoaded) {
+    if (!isLoading) {
       requestAnimationFrame(animateRef.current);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isImageLoaded]);
+  }, [isLoading]);
 
-   useEffect(() => {
-     if (offscreenCanvas) {
-       setIsLoading(false);
-     }
-   }, [offscreenCanvas]);
+  useEffect(() => {
+    if (offscreenCanvas) {
+      setIsLoading(false);
+    }
+  }, [offscreenCanvas]);
 
-   if (isLoading) {
-     return <div>Loading...</div>;
-   }
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   return (
     <>
       <canvas

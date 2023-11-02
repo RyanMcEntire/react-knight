@@ -9,11 +9,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 function Game() {
   const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
-const [isCanvasReady, setIsCanvasReady] = useState(false);
+  const [isCanvasReady, setIsCanvasReady] = useState(false);
 
   console.log('game component');
   const levelData = collisionsLevel1;
-  
+
   useEffect(() => {
     if (offscreenCanvasRef.current) {
       setIsCanvasReady(true);

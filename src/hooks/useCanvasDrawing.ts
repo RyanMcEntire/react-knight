@@ -1,47 +1,38 @@
-import { useMemo, useState } from 'react';
 import { UseCanvasDrawingProps } from '../constants/types/types';
 
 export const useCanvasDrawing = ({
   canvasRef,
   objectPosition,
   scale,
-  imgSrc,
-  customDraw,
+  spriteAnimationRef,
 }: UseCanvasDrawingProps) => {
-  const [isImageLoaded, setImageLoaded] = useState(false);
-  const img = useMemo(() => {
-    const image = new Image();
-    image.onload = () => setImageLoaded(true);
-    image.src = imgSrc;
-    return image;
-  }, [imgSrc]);
+  
+  const draw = () => {
+    const context = canvasRef.current?.getContext('2d');
+    if (context) {
+      // Clear the canvas
+      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-  return {
-    draw: () => {
-      const context = canvasRef.current?.getContext('2d');
-      if (context && canvasRef.current && isImageLoaded) {
-        context.clearRect(
+      const currentAnimation =
+        spriteAnimationRef.current.animations[spriteAnimationRef.current.name];
+      if (currentAnimation) {
+        const currentFrame = spriteAnimationRef.current.frame;
+
+        // Draw the current frame
+        context.drawImage(
+          currentAnimation.img,
+          currentFrame * currentAnimation.frameWidth,
           0,
-          0,
-          canvasRef.current.width,
-          canvasRef.current.height
+          currentAnimation.frameWidth,
+          currentAnimation.frameHeight,
+          objectPosition.x,
+          objectPosition.y,
+          currentAnimation.frameWidth * scale,
+          currentAnimation.frameHeight * scale
         );
-        context.save();
-
-        context.translate(objectPosition.x, objectPosition.y);
-        context.scale(scale, scale);
-        context.imageSmoothingEnabled = false;
-
-        if (img.complete) {
-          if (customDraw) {
-            customDraw(context, img);
-          } else {
-            context.drawImage(img, 0, 0);
-          }
-        }
-        context.restore();
       }
-    },
-    isImageLoaded,
+    }
   };
+
+  return { draw };
 };
