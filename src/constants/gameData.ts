@@ -8,8 +8,8 @@ export const canvasHeight = tileSize * gameHeight;
 export const canvasWidth = tileSize * gameWidth;
 
 const startingPosPix = {
-  x: 255,
-  y: 120,
+  x: 85,
+  y: 100,
 };
 const startingPosRatio = {
   x: startingPosPix.x / (gameWidth * originalTileSize),
@@ -29,14 +29,15 @@ export const playerHeight = playerHeightOptions[scale];
 export const latMovementSpeed = 125 * scale;
 export const baseGravity = 9.8 * 45 * scale;
 export const megaGravity = baseGravity * 2.5;
-export const jumpVelocity = -190 * scale;
+export const jumpVelocity = -210 * scale;
 export const playerScale = 1;
-export const playerSpriteTrueHeight = 32
-export const playerSpriteTrueWidth = 32
-export const playerSpriteHeight = 32 * scale;
-export const playerSpriteWidth = 32 * scale;
+export const playerSpriteTrueHeight = 32;
+export const playerSpriteTrueWidth = 32;
+export const playerSpriteHeight = 64 * scale;
+export const playerSpriteWidth = 43 * scale;
 export const groundCheckExpansion = 2;
 export const hitboxOffset = {
-  left: 7 * scale,
-  right: 14 * scale,
+  left: 4 * scale,
+  right: 9 * scale,
+  top: 24 * scale
 };

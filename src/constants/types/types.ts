@@ -21,6 +21,7 @@ export type UseCanvasDrawingProps = {
   objectPosition: XY;
   scale: number;
   spriteAnimationRef: React.MutableRefObject<SpriteAnimationState>;
+  playerDirectionRef: React.MutableRefObject<string>;
 };
 
 export type PlayerPhysicsOutputs = {
@@ -34,7 +35,7 @@ export type PlayerPhysicsOutputs = {
   previousVelocityRef: React.MutableRefObject<{ x: number; y: number }>;
   gravityRef: React.MutableRefObject<number>;
   isGroundedRef: React.MutableRefObject<boolean>;
-  playerDirectionRef: React.MutableRefObject<string>;
+  playerDirectionRef: React.MutableRefObject<'left' | 'right'>;
 };
 
 export type DrawPlayerCustomProps = {

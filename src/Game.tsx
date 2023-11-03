@@ -38,7 +38,6 @@ function Game() {
             offscreenCanvasRef.current = canvas;
           }}
         />
-        save
         <Background imageSrc={backgroundLevel1} position={{ x: 0, y: 0 }} />
         {isCanvasReady && (
           <Player offscreenCanvas={offscreenCanvasRef.current} />

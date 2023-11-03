@@ -21,29 +21,28 @@ export function handleCollisions(
       switch (collisionDirection) {
         case 'left':
           if (axis === 'x') {
-            playerPosRef.current.x = block.x + playerHitBox.width + 0.001;
+            playerPosRef.current.x = block.x + block.width - hitboxOffset.left + 0.01;
             velocityRef.current.x = 0;
           }
           break;
         case 'right':
           if (axis === 'x') {
-            
             playerPosRef.current.x =
-              block.x - playerHitBox.width - hitboxOffset.left - 0.001;
+              block.x - playerHitBox.width - hitboxOffset.left - 0.01;
             velocityRef.current.x = 0;
-            
           }
           break;
         case 'top':
           if (axis === 'y') {
-            playerPosRef.current.y = block.y + playerHitBox.height + 0.001;
+            playerPosRef.current.y =
+              block.y + block.height - hitboxOffset.top + 0.1;
             velocityRef.current.y = 0;
           }
           break;
         case 'bottom':
           if (axis === 'y') {
-            
-            playerPosRef.current.y = block.y - block.height * 2 + 0.001;
+            playerPosRef.current.y =
+              block.y - playerHitBox.height - hitboxOffset.top + 0.001;
             velocityRef.current.y = 0;
             handleLand();
             isGroundedRef.current = true;
@@ -86,4 +85,25 @@ function getCollisionDirection(playerHitBox: PlayerHitBox, block: Rect) {
       return 'right';
     }
   }
+}
+
+export function drawHitbox(
+  context: CanvasRenderingContext2D | null,
+  hitbox: PlayerHitBox
+) {
+  if (!context) {
+    console.error('No drawing context available');
+    return;
+  }
+
+  console.log('Drawing hitbox:', hitbox);
+
+  const { x, y, width, height } = hitbox;
+  context.beginPath();
+  context.rect(x, y, width, height);
+  context.strokeStyle = 'red';
+  context.lineWidth = 2;
+  context.stroke();
+  context.fillStyle = 'rgba(255, 0, 0, 0.3)';
+  context.fill();
 }

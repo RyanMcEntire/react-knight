@@ -1,16 +1,18 @@
-import { UseCanvasDrawingProps } from '../constants/types/types';
+import { drawHitbox } from '../collision/handleCollision';
+import { hitboxOffset } from '../constants/gameData';
+import { PlayerHitBox, UseCanvasDrawingProps } from '../constants/types/types';
 
 export const useCanvasDrawing = ({
   canvasRef,
   objectPosition,
   scale,
   spriteAnimationRef,
-}: UseCanvasDrawingProps) => {
-  
+  playerDirectionRef,
+  getPlayerHitbox,
+}: UseCanvasDrawingProps & { getPlayerHitbox: () => PlayerHitBox }) => {
   const draw = () => {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
-      // Clear the canvas
       context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
       const currentAnimation =
@@ -18,18 +20,36 @@ export const useCanvasDrawing = ({
       if (currentAnimation) {
         const currentFrame = spriteAnimationRef.current.frame;
 
-        // Draw the current frame
+        const centerX =
+          objectPosition.x + currentAnimation.frameWidth  * 0.5;
+        const axisOfSymmetry =
+          centerX - (hitboxOffset.left - hitboxOffset.right) ;
+
+        if (playerDirectionRef.current === 'left') {
+          context.save();
+          context.scale(-1, 1);
+          context.translate(-2 * axisOfSymmetry, 0);
+        }
+
         context.drawImage(
           currentAnimation.img,
           currentFrame * currentAnimation.frameWidth,
           0,
           currentAnimation.frameWidth,
           currentAnimation.frameHeight,
-          objectPosition.x,
+          playerDirectionRef.current === 'left'
+            ? axisOfSymmetry - currentAnimation.frameWidth * scale * 0.5
+            : objectPosition.x,
           objectPosition.y,
           currentAnimation.frameWidth * scale,
           currentAnimation.frameHeight * scale
         );
+
+        if (playerDirectionRef.current === 'left') {
+          context.restore();
+        }
+        drawHitbox(context, getPlayerHitbox());
+        context.imageSmoothingEnabled = false;
       }
     }
   };

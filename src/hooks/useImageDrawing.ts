@@ -30,6 +30,7 @@ export const useImageDrawing = ({
         image.width * scale,
         image.height * scale
       );
+      context.imageSmoothingEnabled = false
     }
   };
 

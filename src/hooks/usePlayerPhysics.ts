@@ -8,7 +8,7 @@ import {
 } from '../constants/gameData';
 
 export const usePlayerPhysics = (): PlayerPhysicsOutputs => {
-  const playerDirectionRef = useRef('right');
+  const playerDirectionRef = useRef<'left' | 'right'>('right');
 
   const setMoveDirection = (keysPressed: Record<ValidKeys, boolean>) => {
     const isLeftPressed = keysPressed.ArrowLeft || keysPressed.KeyA;

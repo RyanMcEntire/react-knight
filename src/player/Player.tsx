@@ -21,6 +21,7 @@ import {
 } from '../constants/gameData';
 import collisionArray from '../collision/collisionBlockArray';
 import { loadAllAnimations } from '../utilities/handleAnimationData';
+import { drawHitbox } from '../collision/handleCollision';
 
 type PlayerProps = {
   offscreenCanvas: HTMLCanvasElement | null;
@@ -37,6 +38,17 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
     frame: 1,
     animations: {},
   });
+
+  const {
+    handleJump,
+    handleRelease,
+    handleLand,
+    applyGravity,
+    setMoveDirection,
+    velocityRef,
+    isGroundedRef,
+    playerDirectionRef,
+  } = usePlayerPhysics();
 
   useEffect(() => {
     loadAllAnimations()
@@ -60,11 +72,16 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
       });
   }, []);
 
+  
+
   const getPlayerHitbox = (isGroundCheck: boolean = false) => {
+    
     const hitbox = {
       x: playerPosRef.current.x + hitboxOffset.left,
-      y: playerPosRef.current.y,
-      width: playerSpriteWidth - (hitboxOffset.left + hitboxOffset.right),
+      y: playerPosRef.current.y + hitboxOffset.top,
+      width:
+        playerSpriteWidth -
+        (hitboxOffset.left + hitboxOffset.right),
       height: playerSpriteHeight,
     };
     if (isGroundCheck) {
@@ -72,26 +89,14 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
     }
     return hitbox;
   };
-  // const getPlayerHitbox = () => ({width: playerSpriteWidth,
-  //     height: playerSpriteHeight
-
-  // });
-
-  const {
-    handleJump,
-    handleRelease,
-    handleLand,
-    applyGravity,
-    setMoveDirection,
-    velocityRef,
-    isGroundedRef,
-  } = usePlayerPhysics();
 
   const { draw } = useCanvasDrawing({
     canvasRef,
     objectPosition: playerPosRef.current,
     scale: scale * playerScale,
     spriteAnimationRef,
+    getPlayerHitbox,
+    playerDirectionRef,
   });
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
@@ -119,6 +124,11 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
     setMoveDirection(keysPressed);
   }, [keysPressed, setMoveDirection]);
 
+  if (canvasRef.current) {
+    const context = canvasRef.current.getContext('2d');
+    drawHitbox(context, getPlayerHitbox());
+  }
+
   const animateRef = useAnimationLoop(
     getPlayerHitbox,
     collisionArray,
@@ -128,7 +138,8 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
     draw,
     handleLand,
     isGroundedRef,
-    spriteAnimationRef
+    spriteAnimationRef,
+    
   );
 
   useEffect(() => {

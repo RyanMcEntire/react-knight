@@ -14,7 +14,7 @@ const Background: React.FC<BackgroundProps> = ({ imageSrc, position }) => {
     scale,
     imgSrc: imageSrc}
   );
-
+  
   useEffect(() => {
     if (isImageLoaded) {
       draw();
