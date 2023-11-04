@@ -107,7 +107,6 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
       } else {
         handleRelease();
         handleLand();
-        setAnimationState('idle')
       }
     }
   };

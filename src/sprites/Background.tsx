@@ -24,7 +24,7 @@ const Background: React.FC<BackgroundProps> = ({ imageSrc, position }) => {
   return (
     <>
       <canvas
-        className="background"
+        className="background pixelated"
         ref={canvasRef}
         width={canvasWidth}
         height={canvasHeight}

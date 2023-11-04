@@ -50,12 +50,10 @@ export const useAnimationLoop = (
       spriteAnimationRef.current.frame =
         (spriteAnimationRef.current.frame + 1) %
         animations[spriteAnimationRef.current.name].frameCount;
-    }
-
-    timeSinceLastFrameRef.current -= frameDurationRef.current;
-
-    if (spriteAnimationRef.current.frame === 0) {
-      spriteAnimationRef.current.frame = 1;
+      if (spriteAnimationRef.current.frame === 0) {
+        spriteAnimationRef.current.frame = 1;
+      }
+      timeSinceLastFrameRef.current -= frameDurationRef.current;
     }
 
     playerPosRef.current.x += velocityRef.current.x * deltaTimeRef.current;

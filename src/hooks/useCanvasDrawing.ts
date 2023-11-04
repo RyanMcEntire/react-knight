@@ -50,7 +50,7 @@ export const useCanvasDrawing = ({
         if (playerDirectionRef.current === 'left') {
           context.restore();
         }
-        drawHitbox(context, getPlayerHitbox());
+        // drawHitbox(context, getPlayerHitbox());
         context.imageSmoothingEnabled = false;
       }
     }

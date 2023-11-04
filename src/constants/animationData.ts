@@ -17,6 +17,6 @@ export const animations: Record<string, Animation> = {
   jump: {
     src: jump,
     frameCount: 7,
-    frameDuration: 10,
+    frameDuration: 220,
   },
 };

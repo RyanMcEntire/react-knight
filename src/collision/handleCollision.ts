@@ -24,7 +24,6 @@ export function handleCollisions(
           if (axis === 'x') {
             playerPosRef.current.x = block.x + block.width - hitboxOffset.left + 0.01;
             velocityRef.current.x = 0;
-            setAnimationState('idle')
           }
           break;
         case 'right':
@@ -32,7 +31,6 @@ export function handleCollisions(
             playerPosRef.current.x =
               block.x - playerHitBox.width - hitboxOffset.left - 0.01;
             velocityRef.current.x = 0;
-            setAnimationState('idle')
           }
           break;
         case 'top':
