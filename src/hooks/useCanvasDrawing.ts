@@ -9,21 +9,22 @@ export const useCanvasDrawing = ({
   spriteAnimationRef,
   playerDirectionRef,
   getPlayerHitbox,
+  getAnimationState,
 }: UseCanvasDrawingProps & { getPlayerHitbox: () => PlayerHitBox }) => {
   const draw = () => {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
       context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
+      const currentAnimationName = getAnimationState();
       const currentAnimation =
-        spriteAnimationRef.current.animations[spriteAnimationRef.current.name];
+        spriteAnimationRef.current.animations[currentAnimationName];
       if (currentAnimation) {
         const currentFrame = spriteAnimationRef.current.frame;
 
-        const centerX =
-          objectPosition.x + currentAnimation.frameWidth  * 0.5;
+        const centerX = objectPosition.x + currentAnimation.frameWidth * 0.5;
         const axisOfSymmetry =
-          centerX - (hitboxOffset.left - hitboxOffset.right) ;
+          centerX - (hitboxOffset.left - hitboxOffset.right);
 
         if (playerDirectionRef.current === 'left') {
           context.save();
@@ -44,6 +45,7 @@ export const useCanvasDrawing = ({
           currentAnimation.frameWidth * scale,
           currentAnimation.frameHeight * scale
         );
+        console.log('current animation', currentAnimationName);
 
         if (playerDirectionRef.current === 'left') {
           context.restore();

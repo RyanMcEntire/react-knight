@@ -22,6 +22,7 @@ import {
 import collisionArray from '../collision/collisionBlockArray';
 import { loadAllAnimations } from '../utilities/handleAnimationData';
 import { drawHitbox } from '../collision/handleCollision';
+import { useAnimationState } from '../hooks/useAnimationState';
 
 type PlayerProps = {
   offscreenCanvas: HTMLCanvasElement | null;
@@ -38,6 +39,8 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
     frame: 1,
     animations: {},
   });
+
+  const { setAnimationState, getAnimationState } = useAnimationState();
 
   const {
     handleJump,
@@ -72,16 +75,11 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
       });
   }, []);
 
-  
-
   const getPlayerHitbox = (isGroundCheck: boolean = false) => {
-    
     const hitbox = {
       x: playerPosRef.current.x + hitboxOffset.left,
       y: playerPosRef.current.y + hitboxOffset.top,
-      width:
-        playerSpriteWidth -
-        (hitboxOffset.left + hitboxOffset.right),
+      width: playerSpriteWidth - (hitboxOffset.left + hitboxOffset.right),
       height: playerSpriteHeight,
     };
     if (isGroundCheck) {
@@ -97,6 +95,7 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
     spriteAnimationRef,
     getPlayerHitbox,
     playerDirectionRef,
+    getAnimationState,
   });
 
   const handleKeyChange = (key: ValidKeys, isPressed: boolean) => {
@@ -104,9 +103,11 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
       if (isPressed) {
         playerPosRef.current.y += 0.01;
         handleJump();
+        setAnimationState('jump')
       } else {
         handleRelease();
         handleLand();
+        setAnimationState('idle')
       }
     }
   };
@@ -139,7 +140,8 @@ const Player: React.FC<PlayerProps> = ({ offscreenCanvas }) => {
     handleLand,
     isGroundedRef,
     spriteAnimationRef,
-    
+    getAnimationState,
+    setAnimationState
   );
 
   useEffect(() => {

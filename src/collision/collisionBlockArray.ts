@@ -20,5 +20,4 @@ parsedCollision.forEach((row, i) =>
     }
   })
 );
-console.log('collision array', collisionArray);
 export default collisionArray;

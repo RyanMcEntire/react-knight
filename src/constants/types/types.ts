@@ -22,6 +22,7 @@ export type UseCanvasDrawingProps = {
   scale: number;
   spriteAnimationRef: React.MutableRefObject<SpriteAnimationState>;
   playerDirectionRef: React.MutableRefObject<string>;
+  getAnimationState: () => AnimationState;
 };
 
 export type PlayerPhysicsOutputs = {
@@ -65,6 +66,14 @@ export type PlayerHitBox = {
 export interface Animation {
   src: string;
   frameCount: number;
+  frameDuration: number;
+}
+
+export type AnimationState = 'idle' | 'walk' | 'jump';
+
+export interface UseAnimationStateReturn {
+  getAnimationState: () => AnimationState;
+  setAnimationState: (newState: AnimationState) => void;
 }
 
 export interface SpriteAnimationState {

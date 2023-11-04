@@ -1,5 +1,5 @@
 import { groundCheckExpansion, hitboxOffset } from '../constants/gameData';
-import { PlayerHitBox, Rect, XY } from '../constants/types/types';
+import { AnimationState, PlayerHitBox, Rect, XY } from '../constants/types/types';
 import { checkCollision } from './checkCollision';
 
 export function handleCollisions(
@@ -9,7 +9,8 @@ export function handleCollisions(
   playerPosRef: React.MutableRefObject<XY>,
   axis: 'x' | 'y',
   handleLand: () => void,
-  isGroundedRef: React.MutableRefObject<boolean>
+  isGroundedRef: React.MutableRefObject<boolean>,
+  setAnimationState: { (newState: AnimationState): void; (newState: AnimationState): void; }
 ) {
   for (let i = 0; i < collisionArray.length; i += 1) {
     const block = collisionArray[i];
@@ -23,6 +24,7 @@ export function handleCollisions(
           if (axis === 'x') {
             playerPosRef.current.x = block.x + block.width - hitboxOffset.left + 0.01;
             velocityRef.current.x = 0;
+            setAnimationState('idle')
           }
           break;
         case 'right':
@@ -30,6 +32,7 @@ export function handleCollisions(
             playerPosRef.current.x =
               block.x - playerHitBox.width - hitboxOffset.left - 0.01;
             velocityRef.current.x = 0;
+            setAnimationState('idle')
           }
           break;
         case 'top':
@@ -46,6 +49,7 @@ export function handleCollisions(
             velocityRef.current.y = 0;
             handleLand();
             isGroundedRef.current = true;
+            setAnimationState('idle')
           }
           break;
         default:
@@ -96,7 +100,6 @@ export function drawHitbox(
     return;
   }
 
-  console.log('Drawing hitbox:', hitbox);
 
   const { x, y, width, height } = hitbox;
   context.beginPath();

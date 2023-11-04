@@ -46,3 +46,4 @@ export async function loadAllAnimations(): Promise<
   }
   return loadedAnimations;
 }
+
