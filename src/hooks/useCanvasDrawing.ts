@@ -1,4 +1,3 @@
-import { drawHitbox } from '../collision/handleCollision';
 import { hitboxOffset } from '../constants/gameData';
 import { PlayerHitBox, UseCanvasDrawingProps } from '../constants/types/types';
 
@@ -8,7 +7,6 @@ export const useCanvasDrawing = ({
   scale,
   spriteAnimationRef,
   playerDirectionRef,
-  getPlayerHitbox,
   getAnimationState,
 }: UseCanvasDrawingProps & { getPlayerHitbox: () => PlayerHitBox }) => {
   const draw = () => {
